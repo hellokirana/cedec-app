@@ -16,8 +16,41 @@ if (!function_exists('status_active')) {
     function status_active()
     {
         return array(
-            1 => 'Aktif',
+            1 => 'Active',
             2 => 'Draft',
+        );
+    }
+}
+
+if (!function_exists('workshop_status')) {
+    function workshop_status()
+    {
+        return array(
+            1 => 'Registration Open',
+            2 => 'Ongoing',
+            3 => 'Completed',
+        );
+    }
+}
+
+if (!function_exists('payment_status')) {
+    function payment_status()
+    {
+        return array(
+            1 => 'Under Review',
+            2 => 'Completed',
+            3 => 'Rejected',
+        );
+    }
+}
+
+if (!function_exists('registration_status')) {
+    function registration_status()
+    {
+        return array(
+            1 => 'Not Registered',
+            2 => 'Registered',
+            3 => 'Rejected',
         );
     }
 }
@@ -87,6 +120,18 @@ if (!function_exists('list_bank')) {
             "Bank BTPN",
             "Bank Jago",
             "Bank Sinarmas"
+        );
+    }
+}
+
+if (!function_exists('registration_status')) {
+    function list_status_pembayaran()
+    {
+        return array(
+            1 => 'Menunggu Bayar',
+            2 => 'Menunggu Approval',
+            3 => 'Terima',
+            4 => 'Tolak',
         );
     }
 }

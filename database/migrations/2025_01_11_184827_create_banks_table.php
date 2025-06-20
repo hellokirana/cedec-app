@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('bank')->nullable();
             $table->string('bank_number')->nullable();
-            $table->string('status')->nullable();
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

@@ -30,20 +30,12 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
+        'npm',
+        'program_id',
         'email_verified_at',
         'password',
         'avatar',
-        'no_telp',
-        'alamat',
-        'village_code',
-        'district_code',
-        'city_code',
-        'province_code',
         'status',
-        'no_rekening',
-        'rt',
-        'rw',
-        'kategori_id',
     ];
 
     /**
@@ -75,9 +67,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->avatar ? asset('storage/user') . '/' . $this->avatar : 'https://via.placeholder.com/150x150.png';
     }
-    public function kategori()
+    public function program()
     {
-        return $this->belongsTo(Kategori::class, 'kategori_id');
+        return $this->belongsTo(Program::class, 'program_id');
     }
 
 }

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('scores', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->nullable();
-            $table->foreignUuid('participant_id')->nullable();
-            $table->string('skor')->nullable();
+            $table->foreignUuid('registration_id')->nullable();
+            $table->string('score')->nullable();
             $table->timestamps();
         });
     }

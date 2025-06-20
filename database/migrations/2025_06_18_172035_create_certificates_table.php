@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('certificates', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->nullable();
-            $table->foreignUuid('participant_id')->nullable();
+            $table->foreignUuid('registration_id')->nullable();
             $table->string('certificate')->nullable();
             $table->timestamps();
         });

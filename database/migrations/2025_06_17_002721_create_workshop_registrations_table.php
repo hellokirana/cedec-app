@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,10 +17,9 @@ return new class extends Migration
             $table->datetime('time')->nullable();
             $table->string('date')->nullable();
             $table->string('bank_from')->nullable();
-            $table->string('transfer_nominal')->nullable();
             $table->string('transfer_proof')->nullable();
             $table->integer('payment_status')->default(1);
-            $table->integer('participant_status')->default(1);
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

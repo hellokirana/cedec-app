@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('place')->nullable();
             $table->integer('fee')->default(0);
             $table->string('quota')->nullable();
-            $table->string('status')->nullable();
+            $table->integer('status')->default(1);
             $table->datetime('start_date')->nullable();
             $table->datetime('end_date')->nullable();
             $table->timestamps();

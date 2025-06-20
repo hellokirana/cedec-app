@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 class Bank extends Model
 {
     use HasFactory, HasUuids;
-
+    protected $table = 'banks';
     protected $fillable = [
-        'no_urut',
-        'nama',
+        'queue',
+        'name',
         'bank',
-        'no_rekening',
+        'bank_number',
         'status',
     ];
 
