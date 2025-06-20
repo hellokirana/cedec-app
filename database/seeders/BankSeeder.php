@@ -15,18 +15,18 @@ class BankSeeder extends Seeder
     {
         //
         $bank = new Bank();
-        $bank->no_urut = 1;
-        $bank->nama = "PT Jaya Maju";
+        $bank->queue = 1;
+        $bank->name = "PT JGU";
         $bank->bank = "BCA";
-        $bank->no_rekening = "12012234236400";
+        $bank->bank_number = "12012234236400";
         $bank->status = 1;
         $bank->save();
 
         $bank = new Bank();
-        $bank->no_urut = 1;
-        $bank->nama = "CV Maju Jaya";
+        $bank->queue = 1;
+        $bank->name = "CV JGU";
         $bank->bank = "BNI";
-        $bank->no_rekening = "12012234236400";
+        $bank->bank_number = "12012234236400";
         $bank->status = 1;
         $bank->save();
     }

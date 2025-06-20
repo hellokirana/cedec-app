@@ -71,39 +71,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
     protected $appends = ['image_url'];
-    public function isWorker()
-    {
-        return $this->hasRole('worker');
-    }
     public function getImageUrlAttribute()
     {
         return $this->avatar ? asset('storage/user') . '/' . $this->avatar : 'https://via.placeholder.com/150x150.png';
     }
-
-    public function proofs()
-    {
-        return $this->hasMany(WorkerProof::class);
-    }
-    public function province()
-    {
-        return $this->belongsTo(IndonesiaProvince::class, 'province_code', 'code');
-    }
-
-    public function city()
-    {
-        return $this->belongsTo(IndonesiaCity::class, 'city_code', 'code');
-    }
-
-    public function district()
-    {
-        return $this->belongsTo(IndonesiaDistrict::class, 'district_code', 'code');
-    }
-
-    public function village()
-    {
-        return $this->belongsTo(IndonesiaVillage::class, 'village_code', 'code');
-    }
-
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');

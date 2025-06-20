@@ -19,14 +19,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BankSeeder::class,
             WebsiteSeeder::class,
-            KategoriSeeder::class,
-            TestimoniSeeder::class,
-            KontakSeeder::class,
-            SliderSeeder::class,
-            ProvincesSeeder::class,
-            CitiesSeeder::class,
-            DistrictsSeeder::class,
-            VillagesSeeder::class
+            WorkshopSeeder::class,
+            WorkshopRegistrationSeeder::class,
+            ScoreSeeder::class,
+            CertificateSeeder::class,
+            ProgramSeeder::class,
         ]);
     }
 }

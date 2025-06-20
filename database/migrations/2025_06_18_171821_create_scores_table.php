@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->text('worker_description')->nullable()->after('status_order');
+        Schema::create('scores', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->nullable();
+            $table->foreignUuid('participant_id')->nullable();
+            $table->string('skor')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('worker_description');
-        });
+        Schema::dropIfExists('scores');
     }
 };

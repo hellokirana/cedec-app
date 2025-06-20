@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('banks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->integer('no_urut')->nullable();
-            $table->string('nama')->nullable();
+            $table->integer('queue')->nullable();
+            $table->string('name')->nullable();
             $table->string('bank')->nullable();
-            $table->string('no_rekening')->nullable();
+            $table->string('bank_number')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });

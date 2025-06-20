@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_wallets', function (Blueprint $table) {
+        Schema::create('certificates', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->nullable();
-            $table->integer('type')->nullable();
-            $table->integer('nominal')->nullable();
+            $table->foreignUuid('participant_id')->nullable();
+            $table->string('certificate')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_wallets');
+        Schema::dropIfExists('certificates');
     }
 };
