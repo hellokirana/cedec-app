@@ -25,7 +25,7 @@ class Workshop extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->image ? asset('storage/workshop') . '/' . $this->image : 'https://loremflickr.com/800/600';
+        return $this->image ? asset('storage/workshop') . '/' . $this->image : asset('assets/images/default-workshop.png');
     }
 
     public function getStatusTextAttribute()
