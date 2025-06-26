@@ -31,6 +31,17 @@ class WorkshopRegistration extends Model
         return $this->BelongsTo(User::class, 'user_id');
     }
 
+    public function score()
+    {
+        return $this->hasOne(Score::class, 'registration_id');
+    }
+
+    public function certificate()
+    {
+        return $this->hasOne(Certificate::class, 'registration_id');
+    }
+
+
     public function getPaymentStatusTextAttribute()
     {
         $payment_status = payment_status();

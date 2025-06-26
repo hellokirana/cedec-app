@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Score;
 use App\Models\Kontak;
 use App\Models\Slider;
 use App\Models\Layanan;
@@ -163,5 +164,51 @@ class FrontendController extends Controller
         return view('frontend.my_workshop', compact('registrations', 'search', 'status', 'fee'));
     }
 
+    public function result(Request $request)
+    {
+
+        // Query untuk mengambil data registrasi dengan status=5
+        $query = WorkshopRegistration::with([
+            'workshop', // Relasi ke table workshops
+            'scores',   // Relasi ke table scores
+            'certificate' // Relasi ke table certificates
+        ])
+            ->where('user_id', auth()->id())
+            ->where('status', 5);
+
+        // Ambil hasil dengan pagination
+        try {
+            $registrations = $query->latest()->paginate(15);
+
+            // Hitung rata-rata skor untuk setiap registrasi
+            foreach ($registrations as $registration) {
+                $totalScore = $registration->scores->sum('score');
+                $countScores = $registration->scores->count();
+                $registration->average_score = $countScores > 0 ? round($totalScore / $countScores, 2) : 0;
+            }
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data.');
+        }
+
+        // Tampilkan view dengan data
+        return view('frontend.result', compact('registrations'));
+    }
+
+    public function downloadCertificate($registration_id)
+    {
+        $registration = WorkshopRegistration::with([
+            'workshop',
+            'certificate'
+        ])->where('id', $registration_id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$registration || !$registration->certificate) {
+            return redirect()->back()->with('error', 'Certificate not found.');
+        }
+
+        return response()->download(storage_path('app/certificates/' . $registration->certificate->file_path));
+    }
 
 }

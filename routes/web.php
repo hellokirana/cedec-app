@@ -26,9 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/workshop', [FrontendController::class, 'workshop']);
     Route::get('/workshop/{id}', [FrontendController::class, 'workshop_detail']);
     Route::get('/my-workshop', [FrontendController::class, 'my_workshop']);
-    Route::get('/kontak', [FrontendController::class, 'kontak']);
-    Route::post('/send_kontak', [FrontendController::class, 'send_kontak']);
     Route::post('/send_workshop_registration', [FrontendController::class, 'send_workshop_registration'])->name('send_workshop_registration');
+    Route::get('/result', action: [FrontendController::class, 'result']);
 
     // Profil & Dashboard
     Route::get('/home', [HomeController::class, 'index'])->name('home');

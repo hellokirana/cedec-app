@@ -50,7 +50,9 @@ if (!function_exists('registration_status')) {
         return array(
             1 => 'Not Registered',
             2 => 'Registered',
-            3 => 'Rejected',
+            3 => 'On Progress',
+            4 => 'Completed',
+            5 => 'Rejected',
         );
     }
 }

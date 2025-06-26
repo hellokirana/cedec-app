@@ -23,4 +23,5 @@ class Score extends Model
     {
         return $this->belongsTo(WorkshopRegistration::class, 'registration_id');
     }
+    
 }
