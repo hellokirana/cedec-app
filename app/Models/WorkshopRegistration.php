@@ -26,7 +26,7 @@ class WorkshopRegistration extends Model
         return $this->BelongsTo(workshop::class, 'workshop_id');
     }
 
-    public function student(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'user_id');
     }
@@ -39,11 +39,12 @@ class WorkshopRegistration extends Model
 
     public function getRegistrationStatusTextAttribute()
     {
-        $status_order = list_status_order();
-        return isset($status_order[$this->status_order]) ? $status_order[$this->status_order] : '';
+        $registration_status = registration_status();
+        return isset($registration_status[$this->registration_status]) ? $registration_status[$this->registration_status] : '';
     }
 
-    protected $appends = ['bukti_transfer_url'];
+
+    protected $appends = ['transfer_proof_url'];
 
     public function getTransferproofUrlAttribute()
     {

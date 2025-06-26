@@ -15,8 +15,6 @@ return new class extends Migration {
             $table->foreignUuid('user_id')->nullable();
             $table->foreignUuid('workshop_id')->nullable();
             $table->datetime('time')->nullable();
-            $table->string('date')->nullable();
-            $table->string('bank_from')->nullable();
             $table->string('transfer_proof')->nullable();
             $table->integer('payment_status')->default(1);
             $table->integer('status')->default(1);

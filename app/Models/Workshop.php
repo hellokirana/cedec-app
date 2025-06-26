@@ -33,4 +33,10 @@ class Workshop extends Model
         $status = workshop_status();
         return isset($status[$this->status]) ? $status[$this->status] : '';
     }
+
+    public function registrations()
+    {
+        return $this->hasMany(WorkshopRegistration::class);
+    }
+
 }

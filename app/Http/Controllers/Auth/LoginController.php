@@ -27,7 +27,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -46,36 +46,36 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function login(Request $request)
-    {
-        // Validasi input
-        $this->validate($request, [
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'g-recaptcha-response' => 'required', // Validasi reCAPTCHA
-        ]);
+    // public function login(Request $request)
+    // {
+    //     // Validasi input
+    //     $this->validate($request, [
+    //         'email' => 'required|string|email',
+    //         'password' => 'required|string',
+    //         // 'g-recaptcha-response' => 'required', // Validasi reCAPTCHA
+    //     ]);
 
-        // Validasi reCAPTCHA
-        $response = $request->input('g-recaptcha-response');
-        $secret = env('RECAPTCHA_SECRET_KEY');
+    //     // Validasi reCAPTCHA
+    //     // $response = $request->input('g-recaptcha-response');
+    //     // $secret = env('RECAPTCHA_SECRET_KEY');
 
-        $captchaResponse = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
-            'secret' => $secret,
-            'response' => $response,
-        ]);
+    //     // $captchaResponse = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
+    //     //     'secret' => $secret,
+    //     //     'response' => $response,
+    //     // ]);
 
-        $captchaData = $captchaResponse->json();
+    //     // $captchaData = $captchaResponse->json();
 
-        if (!$captchaData['success']) {
-            return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA validation failed.']);
-        }
+    //     // if (!$captchaData['success']) {
+    //     //     return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA validation failed.']);
+    //     // }
 
-        // Jika validasi CAPTCHA berhasil, lanjutkan dengan login
-        if ($this->attemptLogin($request)) {
-            return $this->sendLoginResponse($request);
-        }
+    //     // // Jika validasi CAPTCHA berhasil, lanjutkan dengan login
+    //     // if ($this->attemptLogin($request)) {
+    //     //     return $this->sendLoginResponse($request);
+    //     // }
 
-        // Jika login gagal, kembalikan ke form dengan error
-        return $this->sendFailedLoginResponse($request);
-    }
+    //     // Jika login gagal, kembalikan ke form dengan error
+    //     return $this->sendFailedLoginResponse($request);
+    // }
 }

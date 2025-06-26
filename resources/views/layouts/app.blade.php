@@ -7,12 +7,13 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="initial-province" content="{{ Auth::user()->province_code }}">
-    <meta name="initial-city" content="{{ Auth::user()->city_code }}">
-    <meta name="initial-district" content="{{ Auth::user()->district_code }}">
-    <meta name="initial-village" content="{{ Auth::user()->village_code }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'CEdEC') }}</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/images/favicon.png') }}" type="image/x-icon">
+    <!-- Favicon -->
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -31,7 +32,7 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo" width="250">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"

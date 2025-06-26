@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kategori;
 use App\Models\Kontak;
-use App\Models\Layanan;
 use App\Models\Slider;
+use App\Models\Layanan;
+use App\Models\Kategori;
+use App\Models\Workshop;
 use App\Models\Testimoni;
 use Illuminate\Http\Request;
+use App\Models\WorkshopRegistration;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,95 +18,150 @@ class FrontendController extends Controller
 {
     public function index()
     {
-        $slider_all = Slider::where('status', 1)->orderBy('no_urut')->get();
-        $kategori_all = Kategori::where('status', 1)->orderBy('no_urut')->get();
-        $testimoni_all = Testimoni::where('status', 1)->orderBy('no_urut')->limit(5)->get();
-        $layanan_all = Layanan::with('kategori')->where('status', 1)->where('featured', 1)->latest()->limit(12)->get();
-        return view('frontend.welcome', compact('slider_all', 'kategori_all', 'layanan_all', 'testimoni_all'));
+        $slider_all = Slider::where('status', 1)->orderBy('queue')->get();
+        $workshop_all = Workshop::where('status', 1)->latest()->limit(6)->get();
+        return view('frontend.welcome', compact('slider_all', 'workshop_all'));
     }
 
-    public function layanan(Request $request)
+    public function workshop(Request $request)
     {
-        // Validasi input
         $request->validate([
-            'kategori' => 'nullable|string', // UUID adalah string
-            'cari' => 'nullable|string',
+            'search' => 'nullable|string',
+            'status' => 'nullable|in:1,2,3',
+            'fee' => 'nullable|in:free,paid',
+
         ]);
 
-        // Ambil parameter dari request
-        $kategori = $request->kategori;
-        $cari = $request->cari;
+        $search = $request->search;
+        $status = $request->status;
+        $fee = $request->fee;
 
-        // Ambil semua kategori yang aktif
-        $kategori_all = Kategori::where('status', 1)->orderBy('no_urut')->get();
-
-        // Query layanan
-        $query = Layanan::query();
-        $query->where('status', 1);
+        $query = Workshop::with([
+            'registrations' => function ($q) {
+                $q->where('user_id', auth()->id());
+            }
+        ]);
 
         // Filter berdasarkan pencarian
-        if (!empty($cari)) {
-            $query->where('title', 'like', '%' . $cari . '%');
+        if (!empty($search)) {
+            $query->where('title', 'like', '%' . $search . '%');
         }
 
-        // Filter berdasarkan kategori (UUID)
-        if (!empty($kategori)) {
-            $query->where('kategori_id', $kategori);
+        // Filter berdasarkan status
+        if (!empty($status)) {
+            $query->where('status', $status);
         }
 
-        // Paginasi hasil query
+        // Filter fee
+        if (!empty($fee)) {
+            if ($fee === 'free') {
+                $query->where('fee', 0);
+            } elseif ($fee === 'paid') {
+                $query->where('fee', '>', 0);
+            }
+        }
+
+        // Ambil hasil
         try {
-            $layanan_all = $query->with('kategori')->latest()->paginate(15);
+            $workshop_all = $query->latest()->paginate(15);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data.');
         }
 
         // Tampilkan view dengan data
-        return view('frontend.layanan', compact('layanan_all', 'kategori_all', 'kategori', 'cari'));
+        return view('frontend.workshop', compact('workshop_all', 'search', 'status', 'fee'));
     }
 
-    public function layanan_detail($id)
+    public function workshop_detail($id)
     {
-        $data = Layanan::with('kategori')->where('status', 1)->where('id', $id)->first();
+
+        $data = Workshop::where('id', $id)->first();
+        $banks = \App\Models\Bank::all();
+
         if (empty($data)) {
-            return redirect()->back()->with('error', 'data tidak ditemukan');
+            return redirect()->back()->with('error', 'data not found');
         }
-        $data_related = Layanan::with('kategori')->where('status', 1)->where('id', '!=', $id)->inRandomOrder()->limit(4)->get();
-        return view('frontend.layanan_detail',compact('data','data_related'));
+        $data_related = Workshop::where('status', 1)->where('id', '!=', $id)->inRandomOrder()->limit(4)->get();
+        return view('frontend.workshop_detail', compact('data', 'data_related', 'banks'));
     }
 
-    public function tentang()
+    public function send_workshop_registration(Request $request)
     {
-        return view('frontend.tentang');
-    }
+        if (!Auth::user()->hasVerifyEmail()) {
+            return redirect()->back()->with('error', 'Silakan verifikasi email terlebih dahulu sebelum mendaftar workshop.');
+        }
 
-    public function kontak()
-    {
-        return view('frontend.kontak');
-    }
-
-    public function send_kontak(Request $request)
-    {
         $validated = Validator::make($request->all(), [
-            'nama' => 'required',
-            'email' => 'required',
-            'subjek' => 'required',
-            'pesan' => 'required',
+            'user_id' => 'required|exists:users,id',
+            'workshop_id' => 'required|exists:workshops,id',
         ]);
 
         if ($validated->fails()) {
-            Session::flash('warning', 'data gagal di simpan');
-            return redirect()->back()
-                ->withErrors($validated)
-                ->withInput();
+            return redirect()->back()->withErrors($validated)->withInput();
         }
 
-        $data = new Kontak();
-        $data->nama = $request->nama;
-        $data->email = $request->email;
-        $data->pesan = $request->pesan;
-        $data->subjek = $request->subjek;
-        $data->save();
-        return redirect()->back()->with('success', 'Pesan berhasil di kirim');
+        $layanan = Workshop::find($request->workshop_id);
+        if (!$layanan) {
+            return redirect()->back()->with('error', 'Workshop not found.');
+        }
+
+        $send = new WorkshopRegistration();
+        $send->workshop_id = $request->workshop_id;
+        $send->user_id = Auth::user()->id;
+        $send->nominal = $layanan->harga_member + rand(100, 999);
+        $send->time = $dateTime;
+        $send->transfer_proof = $dateTime;
+        $send->status_pembayaran = 1;
+        $send->status_order = 1;
+        $send->save();
+
+        return redirect('data/workshop_registration/' . $send->id . '/success_order')->with('success', 'order berhasil di buat');
     }
+
+    public function my_workshop(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'search' => 'nullable|string',
+            'status' => 'nullable|in:1,2,3',
+            'fee' => 'nullable|in:free,paid',
+        ]);
+
+        $search = $request->search;
+        $status = $request->status;
+        $fee = $request->fee;
+
+        $userId = auth()->id();
+
+        // Query Registrasi user, relasi dengan workshop
+        $query = WorkshopRegistration::with('workshop')
+            ->where('user_id', $userId)
+            ->whereHas('workshop', function ($q) use ($search, $status, $fee) {
+                if (!empty($search)) {
+                    $q->where('title', 'like', '%' . $search . '%');
+                }
+
+                if (!empty($status)) {
+                    $q->where('status', $status);
+                }
+
+                if (!empty($fee)) {
+                    if ($fee === 'free') {
+                        $q->where('fee', 0);
+                    } elseif ($fee === 'paid') {
+                        $q->where('fee', '>', 0);
+                    }
+                }
+            });
+
+        try {
+            $registrations = $query->latest()->paginate(12);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data.');
+        }
+
+        return view('frontend.my_workshop', compact('registrations', 'search', 'status', 'fee'));
+    }
+
+
 }

@@ -24,11 +24,15 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
+            'npm' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:255', 'unique:users'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'program_id' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'g-recaptcha-response' => 'required', // Validasi reCAPTCHA
+            // 'g-recaptcha-response' => 'required', // Validasi reCAPTCHA
+
         ]);
+
     }
 
     public function register(Request $request)
@@ -36,22 +40,22 @@ class RegisterController extends Controller
         // Validasi input
         $this->validator($request->all())->validate();
 
-        // Validasi reCAPTCHA
-        $response = $request->input('g-recaptcha-response');
-        $secret = env('RECAPTCHA_SECRET_KEY');
+        //     // Validasi reCAPTCHA
+        //     $response = $request->input('g-recaptcha-response');
+        //     $secret = env('RECAPTCHA_SECRET_KEY');
 
-        // Kirim permintaan ke Google untuk memverifikasi reCAPTCHA
-        $captchaResponse = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
-            'secret' => $secret,
-            'response' => $response,
-        ]);
+        //     // Kirim permintaan ke Google untuk memverifikasi reCAPTCHA
+        //     $captchaResponse = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
+        //         'secret' => $secret,
+        //         'response' => $response,
+        //     ]);
 
-        $captchaData = $captchaResponse->json();
+        //     $captchaData = $captchaResponse->json();
 
-        // Cek apakah reCAPTCHA valid
-        if (!$captchaData['success']) {
-            return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA verification failed.']);
-        }
+        //     // Cek apakah reCAPTCHA valid
+        //     if (!$captchaData['success']) {
+        //         return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA verification failed.']);
+        //     }
 
         // Jika validasi berhasil, buat pengguna baru
         $user = $this->create($request->all());
@@ -65,13 +69,14 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $user = User::create([
+            'npm' => $data['npm'],
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'program_id' => $data['program_id'],
         ]);
 
-        // Jika Anda menggunakan sistem peran, pastikan ini sesuai dengan implementasi Anda
-        $user->assignRole('member'); // Pastikan Anda memiliki metode assignRole di model User
+        $user->assignRole('student');
 
         return $user;
     }

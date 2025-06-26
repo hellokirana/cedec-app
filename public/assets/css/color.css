@@ -2,47 +2,35 @@
 
 :root {
     /*  primary color */
-    --primary-color: #073BBE;
-    --primary-color-rgb: 190, 59, 7;
+    --primary-color: #7f8caa;
+    --primary-color-rgb: rgb(127, 140, 170);
 
     /*  secondary color */
-    --secondary-color: #4A72D7;
-    --secondary-color-rgb: 215, 114, 74;
+    --secondary-color: #b8cfce;
+    --secondary-color-rgb: rgb(184, 207, 206);
 
     /* text-color 1 */
-    --text-color-1: #2E4A61;
+    --text-color-1: #2e4a61;
 
     /* black color */
-    --black-color: #032642;
-    --black-color-rgb: 3, 38, 66;
+    --black-color: #333446;
+    --black-color-rgb: rgb(51, 52, 70);
 
     /* white color */
     --white-color: #ffffff;
-    --white-color-rgb: 255, 255, 255;
+    --white-color-rgb: rgb(255, 255, 255);
 
     /* border color */
-    --border-color-1: #F5E4DF;
+    --border-color-1: #d4d4d4;
 
     /* Bg color */
-    --bg-1: #FFF9F9;
-    --bg-2: #FDEEEE;
-    --bg-3: #F4FAFF;
-    
+    --bg-1: #ffffff;
+    --bg-2: #b8cfce;
+    --bg-3: #b8cfce;
+
     /* Shadow 1 */
     --shadow-1: 2px 1px 28.7px -2px rgba(255, 255, 255, 0.15);
 
     /* Shadow 2 */
     --shadow-2: 2px 1px 28.7px -2px rgba(0, 0, 0, 0.15);
-
 }
-
-
-
-
-
-
-
-
-
-
-

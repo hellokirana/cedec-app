@@ -28,7 +28,7 @@ if (!function_exists('workshop_status')) {
         return array(
             1 => 'Registration Open',
             2 => 'Ongoing',
-            3 => 'Completed',
+            3 => 'Closed',
         );
     }
 }
@@ -233,15 +233,5 @@ if (!function_exists('terbilang')) {
             return terbilang($x / 1000) . " ribu" . terbilang($x % 1000);
         elseif ($x < 1000000000)
             return terbilang($x / 1000000) . " juta" . terbilang($x % 1000000);
-    }
-}
-
-
-
-if (!function_exists('kategori_all')) {
-    function kategori_all()
-    {
-        $data_kategori = Kategori::orderBy('title')->pluck('title', 'id')->toArray();
-        return $data_kategori;
     }
 }

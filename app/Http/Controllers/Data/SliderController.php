@@ -27,7 +27,7 @@ class SliderController extends Controller
     public function store(Request $request)
     {
         $validated = Validator::make($request->all(), [
-            'no_urut' => 'required',
+            'queue' => 'required',
             'title' => 'required',
             'status' => 'required',
         ]);
@@ -40,13 +40,13 @@ class SliderController extends Controller
         }
 
         $data = new Slider();
-        $data->no_urut = $request->no_urut;
+        $data->queue = $request->no_urut;
         $data->title = $request->title;
         $data->link = $request->link;
         $data->status = $request->status;
-        $fileimage       = $request->file('image');
+        $fileimage = $request->file('image');
         if (!empty($fileimage)) {
-            $fileimageName   = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
+            $fileimageName = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
             Storage::putFileAs(
                 'public/slider',
                 $fileimage,
@@ -69,7 +69,7 @@ class SliderController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'no_urut' => 'required|integer',
+            'queue' => 'required|integer',
             'title' => 'required|string',
             'status' => 'required',
         ]);
@@ -78,14 +78,14 @@ class SliderController extends Controller
         if (empty($data)) {
             return redirect()->back()->with('error', 'data tidak ditemukan');
         }
-        $data->no_urut = $request->no_urut;
+        $data->queue = $request->no_urut;
         $data->title = $request->title;
         $data->link = $request->link;
         $data->status = $request->status;
 
-        $fileimage       = $request->file('image');
+        $fileimage = $request->file('image');
         if (!empty($fileimage)) {
-            $fileimageName   = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
+            $fileimageName = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
             Storage::putFileAs(
                 'public/slider',
                 $fileimage,

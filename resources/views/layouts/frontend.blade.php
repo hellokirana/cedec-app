@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Dekat</title>
+    <title>CEdEC Jakarta Global University</title>
 
     <!-- Stylesheets -->
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
@@ -24,82 +24,98 @@
 <body>
 
     <div class="page-wrapper">
-
-        <!-- preloader -->
-        <div class="loader-wrap">
-            <div class="preloader">
-                <div class="preloader-close">x</div>
-                <div id="handle-preloader" class="handle-preloader">
-                    <div class="animation-preloader">
-                        <div class="loader-image">
-                            <img src="{{ asset('assets/images/loader.gif') }}" alt="loader">
-                        </div>
-                        <div class="txt-loading">
-                            <span data-text-preloader="D" class="letters-loading">
-                                D
-                            </span>
-                            <span data-text-preloader="e" class="letters-loading">
-                                e
-                            </span>
-                            <span data-text-preloader="k" class="letters-loading">
-                                k
-                            </span>
-                            <span data-text-preloader="a" class="letters-loading">
-                                a
-                            </span>
-                            <span data-text-preloader="t" class="letters-loading">
-                                t
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- preloader end -->
-
         <!-- header -->
         <header class="main-header header-style-one">
 
             <!-- Header Lower -->
-            <div class="header-lower">
-                <div class="container">
-                    <div class="inner-container d-flex align-items-center justify-content-between">
-                        <div class="header-left-column">
-                            <div class="logo-box">
-                                <div class="logo"><a href="{{ url('/') }}"><img
-                                            src="{{ asset('assets/images/logo.png') }}" alt="logo"></a></div>
-                            </div>
-                        </div>
-                        <div class="header-center-column">
-                            <div class="nav-outer">
-                                <div class="mobile-nav-toggler"><img
-                                        src="{{ asset('assets/images/icons/icon-bar.png') }}" alt="icon"></div>
-                                <nav class="main-menu navbar-expand-md navbar-light">
-                                    <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
-                                        <ul class="navigation">
-                                            <li><a href="{{ url('/') }}">Beranda</a></li>
-                                            <li><a href="{{ url('/layanan') }}">layanan</a></li>
-                                            <li><a href="{{ url('/tentang') }}">Tentang</a></li>
-                                            <li><a href="{{ url('/kontak') }}">Kontak</a></li>
-                                        </ul>
-                                    </div>
-                                </nav>
-                            </div>
-                        </div>
-                        <div class="header-right-column d-flex  align-items-center">
-                            <div class="header-right-btn-area">
-                                @guest
-                                    <a href="{{ url('login') }}" class="btn-1">Login</a>
-                                    <a href="{{ url('register') }}" class="btn-1">Daftar</a>
-                                @else
-                                    <a href="{{ url('home') }}" class="btn-1">Member Area</a>
-                                @endguest
-                            </div>
-                        </div>
+<div class="header-lower">
+    <div class="container">
+        <div class="inner-container d-flex align-items-center justify-content-between">
+            
+            <!-- Logo -->
+            <div class="header-left-column">
+                <div class="logo-box">
+                    <div class="logo">
+                        <a href="{{ url('/') }}">
+                            <img src="{{ asset('assets/images/logo.png') }}" alt="logo" width="250">
+                        </a>
                     </div>
                 </div>
             </div>
-            <!-- Header Lower -->
+
+            <!-- Navigation -->
+            <div class="header-center-column" @guest style="min-height: 90px;" @endguest>
+                <div class="nav-outer">
+                    <div class="mobile-nav-toggler">
+                        <img src="{{ asset('assets/images/icons/icon-bar.png') }}" alt="icon">
+                    </div>
+                    <nav class="main-menu navbar-expand-md navbar-light">
+                        <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                            <ul class="navigation">
+                                <li><a href="{{ url('/') }}">Home</a></li>
+
+                                @auth
+                                    <li class="dropdown">
+                                        <a>Workshops <i class="fa-solid fa-chevron-down ms-1"></i></a>
+                                        <ul>
+                                            <li><a href="{{ url('/workshop') }}">All Workshops</a></li>
+                                            <li><a href="{{ url('/my-workshop') }}">My Workshops</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="{{ url('/kontak') }}">History & Certificate</a></li>
+                                @endauth
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Header Right -->
+            <div class="header-right-column d-flex align-items-center">
+    <div class="header-right-btn-area">
+        @guest
+            <a href="{{ url('login') }}" class="btn-1">Login</a>
+            <a href="{{ url('register') }}" class="btn-1">Register</a>
+        @else
+            @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
+                <a href="{{ url('home') }}" class="btn-1">Member Area</a>
+            @else
+                <div class="dropdown d-flex align-items-center gap-2">
+                    <img 
+                        src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/images/default-avatar.png') }}" 
+                        alt="Avatar"
+                        class="rounded-circle"
+                        style="width: 32px; height: 32px; object-fit: cover;"
+                    >
+                    <a class="dropdown-toggle text-dark fw-semibold" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ Auth::user()->name }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url('/profil') }}">Profile</a></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Logout
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            @endif
+        @endguest
+    </div>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<!-- Header Lower -->
+
+
 
             <!-- sticky header -->
             <div class="sticky-header">
@@ -109,7 +125,7 @@
                             <div class="left-column d-flex align-items-center">
                                 <div class="logo-box">
                                     <div class="logo"><a href="{{ url('/') }}"><img
-                                                src="{{ asset('assets/images/logo.png') }}" alt="logo"></a></div>
+                                                src="{{ asset('assets/images/logo.png') }}" alt="logo" width='250'></a></div>
                                 </div>
                             </div>
 
@@ -120,15 +136,42 @@
                             </div>
 
                             <div class="header-right-column d-flex align-items-center">
-                                <div class="header-right-btn-area">
-                                    @guest
-                                        <a href="{{ url('login') }}" class="btn-1">Login</a>
-                                        <a href="{{ url('register') }}" class="btn-1">Daftar</a>
-                                    @else
-                                        <a href="{{ url('home') }}" class="btn-1">Member Area</a>
-                                    @endguest
-                                </div>
-                            </div>
+                <div class="header-right-btn-area">
+                    @guest
+                        <a href="{{ url('login') }}" class="btn-1">Login</a>
+                        <a href="{{ url('register') }}" class="btn-1">Register</a>
+                    @else
+                        @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
+                            <a href="{{ url('home') }}" class="btn-1">Member Area</a>
+                        @else
+                            <div class="dropdown d-flex align-items-center gap-2">
+                    <img 
+                        src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/images/default-avatar.png') }}" 
+                        alt="Avatar"
+                        class="rounded-circle"
+                        style="width: 32px; height: 32px; object-fit: cover;"
+                    >
+                    <a class="dropdown-toggle text-dark fw-semibold" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ Auth::user()->name }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url('/profil') }}">Profile</a></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Logout
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                        @endif
+                    @endguest
+                </div>
+            </div>
                         </div>
                     </div>
                 </div>
@@ -136,28 +179,47 @@
             <!-- sticky header -->
 
             <!-- mobile menu -->
-            <div class="mobile-menu">
-                <div class="menu-backdrop"></div>
-                <div class="close-btn"><span class="fal fa-times"></span></div>
+<div class="mobile-menu">
+    <div class="menu-backdrop"></div>
+    <div class="close-btn"><span class="fal fa-times"></span></div>
 
-                <nav class="menu-box">
-                    <div class="nav-logo"><a href="{{ url('/') }}"><img
-                                src="{{ asset('assets/images/logo.png') }}" alt="logo"></a></div>
-                    <div class="menu-outer">
-                        <!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->
-                    </div>
-                    <!--Social Links-->
-                    <div class="social-links">
-                        <ul class="clearfix">
-                            <li><a href="#"><span class="fab fa-twitter"></span></a></li>
-                            <li><a href="#"><span class="fab fa-facebook-square"></span></a></li>
-                            <li><a href="#"><span class="fab fa-pinterest-p"></span></a></li>
-                            <li><a href="#"><span class="fab fa-instagram"></span></a></li>
-                            <li><a href="#"><span class="fab fa-youtube"></span></a></li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
+    <nav class="menu-box">
+        <div class="nav-logo">
+            <a href="{{ url('/') }}">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+            </a>
+        </div>
+
+        <div class="menu-outer">
+            <!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->
+        </div>
+
+        <!-- Mobile Menu Login/Register -->
+<div class="mobile-auth-buttons mt-4 text-center">
+    @guest
+        <a href="{{ url('login') }}" class="d-block mb-2 text-dark">Login</a>
+        <a href="{{ url('register') }}" class="d-block text-dark">Register</a>
+    @else
+        @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
+            <a href="{{ url('home') }}" class="d-block text-dark">Member Area</a>
+        @else
+            <a href="{{ url('/profil') }}" class="d-block text-dark mb-2">Profil ({{ Auth::user()->name }})</a>
+            <a href="{{ route('logout') }}"
+               class="d-block text-dark"
+               onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();">
+                Logout
+            </a>
+            <form id="mobile-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
+        @endif
+    @endguest
+</div>
+
+
+    </nav>
+</div>
+
 
         </header>
         <!-- header -->
@@ -166,81 +228,20 @@
         @yield('content')
 
         <!-- footer -->
-        <footer id="footer" class="main-footer footer-one">
-            <div class="container">
-                <div class="footer-top">
-                    <div class="footer-top-logo">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
-                    </div>
-                    <div class="social-media">
-                        <ul>
-                            <li><a href="#0"><i class="fa-brands fa-facebook-f"></i></a></li>
-                            <li><a href="#0"><i class="icon-twiter"></i></a></li>
-                            <li><a href="#0"><i class="fa-brands fa-linkedin-in"></i></a></li>
-                            <li><a href="#0"><i class="fa-brands fa-instagram"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="footer-widget-container">
-                    <div class="row">
-                        <div class="col-xl-3 col-lg-4 col-md-6">
-                            <div class="footer-widget about-widget">
-                                <div class="about-widget-inner">
-                                    <h6 class="footer-widget-title">Tentang</h6>
-                                    <p class="text-justify">
-                                        Dekat adalah platform layanan digital yang dikembangkan oleh Disnaker Kota Depok untuk mempermudah masyarakat dalam mencari dan menggunakan berbagai jasa profesional. Kami menghadirkan layanan dengan paket lengkap dan harga tetap, dirancang untuk memenuhi kebutuhan Anda secara praktis dan efisien.
-                                    </p>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3  col-lg-4  col-md-4">
-                            <div class="footer-widget company-widget">
-                                <div class="company-widget-inner">
-                                    <h6 class="footer-widget-title">Kontak</h6>
-                                    <ul class="footer-widget-list">
-                                        <li><a href="{{ url('/kontak') }}">Kontak</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-2 col-lg-4  col-md-2">
-                            <div class="footer-widget support-widget">
-                                <div class="support-widget-inner">
-                                    <h6 class="footer-widget-title">Suport</h6>
-                                    <ul class="footer-widget-list">
-                                        <li><a href="#0">Tutorial</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-6 col-md-8">
-                            <div class="footer-widget newsletter-widget">
-                                <div class="newsletter-widget-inner">
-                                    <h6 class="footer-widget-title">Hubungi</h6>
-                                    <div class="footer-newsletter-info">
-
-                                        <div class="footer-contact-info">
-                                            <a href="#0"><i class="fa-light fa-location-dot"></i>Jl. Margonda Raya No.54, Depok, Kec. Pancoran Mas, Kota Depok, Jawa Barat 16431</a>
-                                            <a href="mailto:example@gmail.com"><i class="fa-light fa-envelope"></i>
-                                            disnakerkotadepok@gmail.com</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        @auth
+            <footer id="footer" class="main-footer footer-one">
             <div class="footer-copyright">
                 <div class="container">
-                    <div class="footer-copyright-content">
-                        <p> &copy; 2025 | Alrights reserved
+                    <div class="footer-copyright-content text-center">
+                        <p class="small text-muted mb-0">&copy; 2025 | All rights reserved</p>
                     </div>
                 </div>
             </div>
         </footer>
+        @endauth
+        
         <!-- footer -->
+
 
     </div>
 
