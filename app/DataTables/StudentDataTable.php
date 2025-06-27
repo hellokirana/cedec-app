@@ -6,13 +6,10 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class MemberDataTable extends DataTable
+class StudentDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -23,15 +20,14 @@ class MemberDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->editColumn('created_at', function ($model) {
-                return @$model->created_at->format('d-m-Y H:i:s');
+                return $model->created_at ? $model->created_at->format('d-m-Y H:i:s') : '-';
             })
             ->addColumn('action', function ($row) {
-                $button = '<a href="' . url('data/member/' . $row->id) . '" class="btn btn-warning btn-sm mx-1" data-bs-toggle="tooltip" title="info"><i class="ri-file-info-line"></i></a>';
-                $button .= '<a href="#" data-url_href="' . route('member.destroy', $row->id) . '" class="btn btn-danger btn-sm mx-1 delete-post" data-bs-toggle="tooltip" title="Delete"  data-csrf="' . csrf_token() . '"><i class="ri-delete-bin-2-line"></i></a>';
-
+                $button = '<a href="' . url('data/student/' . $row->id) . '" class="btn btn-warning btn-sm mx-1" data-bs-toggle="tooltip" title="Info"><i class="ri-file-info-line"></i></a>';
+                $button .= '<a href="#" data-url_href="' . route('student.destroy', $row->id) . '" class="btn btn-danger btn-sm mx-1 delete-post" data-bs-toggle="tooltip" title="Delete" data-csrf="' . csrf_token() . '"><i class="ri-delete-bin-2-line"></i></a>';
                 return $button;
             })
-            ->rawColumns(['image','action']);
+            ->rawColumns(['action']);
     }
 
     /**
@@ -39,7 +35,9 @@ class MemberDataTable extends DataTable
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()->role('member')->latest();
+        return $model->newQuery()
+            ->role('student')
+            ->select(['id', 'name', 'email', 'npm', 'program_id', 'created_at']);
     }
 
     /**
@@ -48,20 +46,11 @@ class MemberDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('User-table')
+            ->setTableId('student-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            //->dom('Bfrtip')
-            ->orderBy(1)
-            ->selectStyleSingle()
-            ->buttons([
-                // Button::make('excel'),
-                // Button::make('csv'),
-                // Button::make('pdf'),
-                // Button::make('print'),
-                // Button::make('reset'),
-                // Button::make('reload')
-            ]);
+            ->orderBy(4)
+            ->selectStyleSingle();
     }
 
     /**
@@ -70,12 +59,11 @@ class MemberDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-
+            Column::make('created_at')->title('Registered At'),
             Column::make('name'),
             Column::make('email'),
-            Column::make('no_telp'),
-            Column::make('alamat'),
-            Column::make('created_at'),
+            Column::make('npm'),
+            Column::make('program_id'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -89,6 +77,6 @@ class MemberDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'User_' . date('YmdHis');
+        return 'Student_' . date('YmdHis');
     }
 }

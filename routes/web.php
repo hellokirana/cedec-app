@@ -11,7 +11,7 @@ use App\Http\Controllers\Data\SliderController;
 use App\Http\Controllers\Data\KategoriController;
 use App\Http\Controllers\Data\TestimoniController;
 use App\Http\Controllers\Data\LayananController;
-use App\Http\Controllers\Data\MemberController;
+use App\Http\Controllers\Data\StudentController;
 use App\Http\Controllers\Data\AdminController;
 use App\Http\Controllers\Data\OrderController;
 use App\Http\Controllers\Data\WithdrawController;
@@ -44,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/data/bank', BankController::class);
         Route::resource('/data/testimoni', TestimoniController::class);
         Route::resource('/data/layanan', LayananController::class);
-        Route::resource('/data/member', MemberController::class);
+        Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);
     });
 

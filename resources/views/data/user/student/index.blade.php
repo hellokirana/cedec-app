@@ -4,9 +4,7 @@
     <div class="container">
         <div class="card">
             <div class="card-header d-md-flex justify-content-between text-capitalize">
-                Manage worker
-                <a href="{{ route('worker.create') }}" class="btn btn-primary">Add New</a>
-   
+                Manage Student
             </div>
             <div class="card-body">
                 <div class="table-responsive">

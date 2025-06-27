@@ -89,7 +89,7 @@
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user_menu">
-                                        <a class="dropdown-item" href="{{ url('data/member') }}">student</a>
+                                        <a class="dropdown-item" href="{{ url('data/student') }}">student</a>
                                         <a class="dropdown-item" href="{{ url('data/admin') }}">admin</a>
                                     </div>
                                 </li>
