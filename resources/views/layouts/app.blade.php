@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'CEdEC') }}</title>
+    <title>{{ config('app.name', 'Admin CEdEC') }}</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" type="image/x-icon">
@@ -65,42 +65,45 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url('home') }}">dashboard</a>
                             </li>
-                            @hasanyrole('superadmin|worker')
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('data/withdraw') }}">withdraw</a>
-                                </li>
-                            @endhasanyrole
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url('data/order') }}">order</a>
-                            </li>
 
-                            @hasanyrole('superadmin')
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('data/kontak') }}">Kontak</a>
-                                </li>
-
-                                <li class="nav-item dropdown">
+                            <li class="nav-item dropdown">
                                     <a id="layanan_menu" class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                        layanan
+                                        Workshop
                                     </a>
 
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="layanan_menu">
-                                        <a class="dropdown-item" href="{{ url('data/layanan') }}">Layanan</a>
-                                        <a class="dropdown-item" href="{{ url('data/kategori') }}">kategori</a>
-
+                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user_menu">
+                                        <a class="dropdown-item" href="{{ url('data/member') }}">Workshop List</a>
+                                        <a class="dropdown-item" href="{{ url('data/admin') }}">Participants</a>
                                     </div>
                                 </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('data/order') }}">Payment Confirmation</a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                    <a id="layanan_menu" class="nav-link dropdown-toggle" href="#" role="button"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                        User Management
+                                    </a>
+
+                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user_menu">
+                                        <a class="dropdown-item" href="{{ url('data/member') }}">student</a>
+                                        <a class="dropdown-item" href="{{ url('data/admin') }}">admin</a>
+                                    </div>
+                                </li>
+
+                                </li>
                                 <li class="nav-item dropdown">
                                     <a id="layanan_menu" class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                        User
+                                        Result
                                     </a>
 
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="layanan_menu">
-                                        <a class="dropdown-item" href="{{ url('data/member') }}">member</a>
-                                        <a class="dropdown-item" href="{{ url('data/worker') }}">worker</a>
-                                        <a class="dropdown-item" href="{{ url('data/admin') }}">admin</a>
+                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user_menu">
+                                        <a class="dropdown-item" href="{{ url('data/member') }}">Score</a>
+                                        <a class="dropdown-item" href="{{ url('data/admin') }}">Sertificate</a>
                                     </div>
                                 </li>
                                 <li class="nav-item dropdown">
@@ -136,7 +139,6 @@
                                     </form>
                                 </div>
                             </li>
-                        @endguest
                     </ul>
                 </div>
             </div>
