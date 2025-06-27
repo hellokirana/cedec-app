@@ -14,6 +14,24 @@
 <!-- Detail Section -->
 <section class="py-5 bg-light">
     <div class="container">
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if($data->status != 1)
+            <div class="alert alert-warning">
+                <i class="fa-solid fa-circle-exclamation me-2"></i>Registration is closed for this workshop.
+            </div>
+        @endif
+
         <div class="row g-4">
             <!-- Poster (Kiri) -->
             <div class="col-lg-4">
@@ -61,15 +79,17 @@
                             <li><i class="fa-solid fa-location-dot me-2"></i>{{ $data->place }}</li>
                         </ul>
                         @if($data->fee == 0)
-    <form method="POST" action="{{ url('send_order') }}" enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" name="workshop_id" value="{{ $data->id }}">
-        
-        <div class="text-end">
-            <button type="submit" class="btn btn-primary px-4">Register</button>
-        </div>
-    </form>
-@endif
+                            @if($data->status == 1)
+                                <form method="POST" action="{{ url('send_workshop_registration') }}" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="workshop_id" value="{{ $data->id }}">
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary px-4">Register</button>
+                                    </div>
+                                </form>
+                            @endif
+                        @endif
+
 
                     </div>
                 </div>
@@ -77,11 +97,13 @@
         </div>
 
         <!-- Form Registrasi -->
-        @if($data->fee > 0)
+        @if($data->fee > 0 && $data->status == 1)
 <div class="bg-white mt-5 p-4 rounded shadow-sm">
     
 
-    <form method="POST" action="{{ url('send_order') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url('send_workshop_registration') }}" enctype="multipart/form-data">
+       
+
         @csrf
         
         <input type="hidden" name="workshop_id" value="{{ $data->id }}">
@@ -109,6 +131,12 @@
                         </label>
                         <!-- Tempat preview muncul -->
                         <div id="file-preview" class="mt-2 text-start small text-dark"></div>
+@error('transfer_proof')
+    <div class="text-danger mt-2 small">
+        <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ $message }}
+    </div>
+@enderror
+
                     </div>
                 </div>
             </div>

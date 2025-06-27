@@ -14,7 +14,7 @@
 <!-- Result & Certificate Content -->
 <section class="result-section" style="padding: 40px 0;">
     <div class="container">
-
+{{-- 
         <!-- Summary Statistics -->
         <div class="summary-stats mb-4">
             <div class="row">
@@ -69,7 +69,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Results Table -->
         <div class="results-wrapper">
@@ -94,12 +94,13 @@
                                         <tr>
                                             <td>{{ $registrations->firstItem() + $index }}</td>
                                             <td>
-                                                @if($registration->scores && $registration->scores->count() > 0)
-                                                    {{ \Carbon\Carbon::parse($registration->scores->first()->created_at)->format('d M Y') }}
-                                                @else
+                                                @if($registration->score->isNotEmpty())
+                                                    {{ \Carbon\Carbon::parse($registration->score->first()->created_at)->format('d M Y') }}
+                                                    @else
                                                     <span class="text-muted">-</span>
                                                 @endif
                                             </td>
+
                                             <td>
                                                 <div class="workshop-info">
                                                     <h6 class="mb-0">{{ $registration->workshop->title ?? 'N/A' }}</h6>
@@ -109,15 +110,12 @@
                                                 <span class="badge bg-info">Completed</span>
                                             </td>
                                             <td>
-                                                @if($registration->score !== 0)
-                                                    <div class="score-display">
-                                                        <span class="score-value">
-                                                            {{ $registration->average_score }}
-                                                        </span>
-                                                    </div>
+                                                @if($registration->score && $registration->average_score > 0)
+                                                    {{ $registration->average_score }}
                                                 @else
                                                     <span class="text-muted">No Score yet</span>
                                                 @endif
+
                                             </td>
                                             <td>
                                                 @if($registration->certificate)

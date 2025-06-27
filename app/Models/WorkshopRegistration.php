@@ -15,7 +15,6 @@ class WorkshopRegistration extends Model
         'workshop_id',
         'time',
         'date',
-        'bank_from',
         'transfer_proof',
         'payment_status',
         'status',
@@ -23,17 +22,17 @@ class WorkshopRegistration extends Model
 
     public function workshop(): BelongsTo
     {
-        return $this->BelongsTo(workshop::class, 'workshop_id');
+        return $this->belongsTo(workshop::class, 'workshop_id');
     }
 
     public function user(): BelongsTo
     {
-        return $this->BelongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function score()
     {
-        return $this->hasOne(Score::class, 'registration_id');
+        return $this->hasMany(Score::class, 'registration_id');
     }
 
     public function certificate()
@@ -51,14 +50,27 @@ class WorkshopRegistration extends Model
     public function getRegistrationStatusTextAttribute()
     {
         $registration_status = registration_status();
-        return isset($registration_status[$this->registration_status]) ? $registration_status[$this->registration_status] : '';
+        return isset($registration_status[$this->status]) ? $registration_status[$this->status] : '';
     }
 
 
-    protected $appends = ['transfer_proof_url'];
+    protected $appends = ['transfer_proof_url', 'average_score'];
 
     public function getTransferproofUrlAttribute()
     {
         return $this->transfer_proof ? asset('storage/transfer_proof') . '/' . $this->transfer_proof : '';
     }
+
+    public function getAverageScoreAttribute()
+    {
+        if (!$this->scores) {
+            return 0;
+        }
+
+        return $this->scores->count() > 0
+            ? round($this->scores->avg('score'), 2)
+            : 0;
+    }
+
+
 }

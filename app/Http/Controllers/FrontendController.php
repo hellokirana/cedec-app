@@ -14,6 +14,8 @@ use App\Models\WorkshopRegistration;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class FrontendController extends Controller
 {
@@ -88,36 +90,57 @@ class FrontendController extends Controller
 
     public function send_workshop_registration(Request $request)
     {
-        if (!Auth::user()->hasVerifyEmail()) {
-            return redirect()->back()->with('error', 'Silakan verifikasi email terlebih dahulu sebelum mendaftar workshop.');
-        }
-
-        $validated = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
+        $request->validate([
             'workshop_id' => 'required|exists:workshops,id',
+            'transfer_proof' => ($request->has('workshop_id') && Workshop::find($request->workshop_id)?->fee > 0)
+                ? 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+                : 'nullable',
         ]);
 
-        if ($validated->fails()) {
-            return redirect()->back()->withErrors($validated)->withInput();
+
+        $workshop = Workshop::findOrFail($request->workshop_id);
+        $user = Auth::user();
+
+        // 🔒 Cek status workshop, hanya bisa daftar kalau status == 1 (Registration Open)
+        if ($workshop->status != 1) {
+            return back()->with('error', 'Registration is closed for this workshop.');
         }
 
-        $layanan = Workshop::find($request->workshop_id);
-        if (!$layanan) {
-            return redirect()->back()->with('error', 'Workshop not found.');
+        // Cek apakah user sudah pernah daftar
+        $existing = WorkshopRegistration::where('user_id', $user->id)
+            ->where('workshop_id', $workshop->id)
+            ->first();
+        if ($existing) {
+            return back()->with('error', 'You have already registered for this workshop.');
         }
 
-        $send = new WorkshopRegistration();
-        $send->workshop_id = $request->workshop_id;
-        $send->user_id = Auth::user()->id;
-        $send->nominal = $layanan->harga_member + rand(100, 999);
-        $send->time = $dateTime;
-        $send->transfer_proof = $dateTime;
-        $send->status_pembayaran = 1;
-        $send->status_order = 1;
-        $send->save();
+        $data = [
+            'user_id' => $user->id,
+            'workshop_id' => $workshop->id,
+            'time' => now(),
+            'status' => 2, // Registered
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
 
-        return redirect('data/workshop_registration/' . $send->id . '/success_order')->with('success', 'order berhasil di buat');
+        if ($workshop->fee == 0) {
+            // Free workshop
+            $data['payment_status'] = 2; // Paid/Confirmed langsung
+            $data['transfer_proof'] = null;
+        } else {
+            // Paid workshop
+            if ($request->hasFile('transfer_proof')) {
+                $filename = $request->file('transfer_proof')->store('transfer_proofs', 'public');
+                $data['transfer_proof'] = $filename;
+            }
+            $data['payment_status'] = 1; // Menunggu konfirmasi admin
+        }
+
+        WorkshopRegistration::create($data);
+
+        return redirect()->back()->with('success', 'Registration successful!');
     }
+
 
     public function my_workshop(Request $request)
     {
@@ -164,36 +187,42 @@ class FrontendController extends Controller
         return view('frontend.my_workshop', compact('registrations', 'search', 'status', 'fee'));
     }
 
-    public function result(Request $request)
+    public function result()
     {
-
-        // Query untuk mengambil data registrasi dengan status=5
-        $query = WorkshopRegistration::with([
-            'workshop', // Relasi ke table workshops
-            'scores',   // Relasi ke table scores
-            'certificate' // Relasi ke table certificates
-        ])
-            ->where('user_id', auth()->id())
-            ->where('status', 5);
-
-        // Ambil hasil dengan pagination
         try {
-            $registrations = $query->latest()->paginate(15);
+            // Get current authenticated user
+            $user = auth()->user();
 
-            // Hitung rata-rata skor untuk setiap registrasi
-            foreach ($registrations as $registration) {
-                $totalScore = $registration->scores->sum('score');
-                $countScores = $registration->scores->count();
-                $registration->average_score = $countScores > 0 ? round($totalScore / $countScores, 2) : 0;
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'Please login first');
             }
 
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data.');
-        }
+            // Get workshop registrations using Eloquent with relationships
+            $registrations = WorkshopRegistration::with([
+                'workshop:id,title',
+                'score:id,registration_id,score,created_at',
+                'certificate:id,registration_id,certificate'
+            ])
+                ->where('user_id', $user->id)
+                ->where('status', '4')
+                ->where('payment_status', '2')
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-        // Tampilkan view dengan data
-        return view('frontend.result', compact('registrations'));
+            return view('frontend.result', compact('registrations'));
+
+        } catch (\Exception $e) {
+            // Log error for debugging
+            logger('Result page error: ' . $e->getMessage());
+
+            // Return empty paginated collection to prevent blade errors
+            $registrations = WorkshopRegistration::where('id', 0)->paginate(10);
+
+            return view('frontend.result', compact('registrations'))
+                ->with('error', 'Unable to load results at this time.');
+        }
     }
+
 
     public function downloadCertificate($registration_id)
     {
