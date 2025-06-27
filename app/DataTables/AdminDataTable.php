@@ -26,12 +26,12 @@ class AdminDataTable extends DataTable
                 return @$model->created_at->format('d-m-Y H:i:s');
             })
             ->addColumn('action', function ($row) {
-                $button = '<a href="' . url('data/admin/' . $row->id.'/edit') . '" class="btn btn-warning btn-sm mx-1" data-bs-toggle="tooltip" title="info"><i class="ri-file-info-line"></i></a>';
+                $button = '<a href="' . url('data/admin/' . $row->id . '/edit') . '" class="btn btn-warning btn-sm mx-1" data-bs-toggle="tooltip" title="info"><i class="ri-file-info-line"></i></a>';
                 $button .= '<a href="#" data-url_href="' . route('admin.destroy', $row->id) . '" class="btn btn-danger btn-sm mx-1 delete-post" data-bs-toggle="tooltip" title="Delete"  data-csrf="' . csrf_token() . '"><i class="ri-delete-bin-2-line"></i></a>';
 
                 return $button;
             })
-            ->rawColumns(['image','action']);
+            ->rawColumns(['image', 'action']);
     }
 
     /**
@@ -73,8 +73,6 @@ class AdminDataTable extends DataTable
 
             Column::make('name'),
             Column::make('email'),
-            Column::make('no_telp'),
-            Column::make('alamat'),
             Column::make('created_at'),
             Column::computed('action')
                 ->exportable(false)
