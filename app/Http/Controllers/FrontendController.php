@@ -240,4 +240,11 @@ class FrontendController extends Controller
         return response()->download(storage_path('app/certificates/' . $registration->certificate->file_path));
     }
 
+    public function contact()
+    {
+        $slider_all = Slider::where('status', 1)->orderBy('queue')->get();
+        $workshop_all = Workshop::where('status', 1)->latest()->limit(6)->get();
+        return view('frontend.contact', compact('slider_all', 'workshop_all'));
+    }
+
 }

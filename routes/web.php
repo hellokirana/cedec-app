@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-workshop', [FrontendController::class, 'my_workshop']);
     Route::post('/send_workshop_registration', [FrontendController::class, 'send_workshop_registration'])->name('send_workshop_registration');
     Route::get('/result', action: [FrontendController::class, 'result']);
+    Route::get('/contact', action: [FrontendController::class, 'contact']);
 
     // Profil & Dashboard
     Route::get('/home', [HomeController::class, 'index'])->name('home');

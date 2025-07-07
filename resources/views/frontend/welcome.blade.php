@@ -1,30 +1,21 @@
 @extends('layouts.frontend')
 
 @section('content')
-    <!-- banner-section -->
-    <section class="banner-section-one ">
-        <div class="bg-layer" style="background-image: url({{ asset('assets/images/banner/banner-1-bg.jpg') }});">
-        </div>
-        <div class="banner-line-shape">
-            <img src="{{ asset('assets/images/shape/banner-line-shape.png') }}" alt="shape">
-        </div>
-        <div class="container">
-            <div class="swiper-container">
-                <div class="swiper single-item-carousel">
-                    <div class="swiper-wrapper">
-                        @forelse($slider_all as $slider)
-                            <div class="swiper-slide testimonial-slider-item">
-                                <a href="{{ $slider->link }}" target="_blank">
-                                    <img src="{{ $slider->image_url }}" class="w-100">
-                                </a>
-                            </div>
-                        @empty
-                        @endforelse
-                    </div>
-                </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section py-5" style="background: linear-gradient(to right, #ffffff, #ff9365);">
+        <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div class="hero-text mb-4 mb-md-0" style="max-width: 500px;">
+                <h1 class="fw-bold mb-3" style="font-size: 2.5rem;">Empower Your Skills<br>with CEdEC Workshops.</h1>
+                <p class="text-muted mb-4">Join a series of hands-on workshops designed to boost your professional and digital skills. Whether you're a beginner or looking to deepen your expertise, CEdEC welcomes you to grow, learn, and collaborate with industry practitioners.</p>
+                <a href="{{ url('/workshop') }}" class="btn btn-primary px-4">View Workshop</a>
+            </div>
+            <div class="hero-image text-center">
+                <img src="{{ asset('assets/images/logo-illustration.png') }}" alt="logo Illustration" class="img-fluid" style="max-height: 350px;">
             </div>
         </div>
     </section>
+    <!-- End Hero Section -->
 
     <!-- newest workshop -->
     <section class="featured">

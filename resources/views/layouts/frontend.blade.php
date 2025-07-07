@@ -66,6 +66,9 @@
                                             <li>
                                                 <a href="{{ url('/result') }}">Result & Certificate</a>
                                             </li>
+                                            <li>
+                                                <a href="{{ url('/contact') }}">Contact</a>
+                                            </li>
                                             @endauth
                                         </ul>
                                     </div>
@@ -81,7 +84,7 @@
                         <a href="{{ url('register') }}" class="btn-1">Register</a>
                     @else
                         @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
-                            <a href="{{ url('home') }}" class="btn-1">Member Area</a>
+                            <a href="{{ url('home') }}" class="btn-1">Admin</a>
                         @else
                             <div class="dropdown d-flex align-items-center gap-2">
                                 <img 
@@ -143,7 +146,7 @@
                         <a href="{{ url('register') }}" class="btn-1">Register</a>
                     @else
                         @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
-                            <a href="{{ url('home') }}" class="btn-1">Member Area</a>
+                            <a href="{{ url('home') }}" class="btn-1">Admin</a>
                         @else
                             <div class="dropdown d-flex align-items-center gap-2">
                     <img 
