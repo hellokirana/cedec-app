@@ -3,18 +3,19 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Data\WorkerController;
-use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Data\BankController;
-use App\Http\Controllers\Data\SliderController;
-use App\Http\Controllers\Data\KategoriController;
-use App\Http\Controllers\Data\TestimoniController;
-use App\Http\Controllers\Data\LayananController;
-use App\Http\Controllers\Data\StudentController;
 use App\Http\Controllers\Data\AdminController;
 use App\Http\Controllers\Data\OrderController;
+use App\Http\Controllers\Data\SliderController;
+use App\Http\Controllers\Data\WorkerController;
+use App\Http\Controllers\Data\LayananController;
+use App\Http\Controllers\Data\StudentController;
+use App\Http\Controllers\Data\KategoriController;
 use App\Http\Controllers\Data\WithdrawController;
+use App\Http\Controllers\Data\WorkshopController;
+use App\Http\Controllers\Data\TestimoniController;
+use App\Http\Controllers\Auth\VerificationController;
 
 // Route untuk autentikasi (login, register, forgot password)
 Auth::routes(['verify' => true]);
@@ -44,9 +45,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/data/kategori', KategoriController::class);
         Route::resource('/data/bank', BankController::class);
         Route::resource('/data/testimoni', TestimoniController::class);
-        Route::resource('/data/layanan', LayananController::class);
         Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);
+        Route::resource('/data/workshop', WorkshopController::class);
     });
 
     // Worker data

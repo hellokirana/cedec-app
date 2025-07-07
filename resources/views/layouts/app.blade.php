@@ -73,7 +73,7 @@
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user_menu">
-                                        <a class="dropdown-item" href="{{ url('data/member') }}">Workshop List</a>
+                                        <a class="dropdown-item" href="{{ url('data/workshop') }}">Workshop List</a>
                                         <a class="dropdown-item" href="{{ url('data/admin') }}">Participants</a>
                                     </div>
                                 </li>
