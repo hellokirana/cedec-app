@@ -84,6 +84,6 @@ class BankController extends Controller
     {
         $data = Bank::findOrFail($id);
         $data->delete();
-        return response()->json(['success' => 'hapus data berhasil']);
+        return response()->json(['success' => 'delete data successfully']);
     }
 }

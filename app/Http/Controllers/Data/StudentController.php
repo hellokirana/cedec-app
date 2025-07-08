@@ -74,6 +74,6 @@ class StudentController extends Controller
 
         $data->delete();
 
-        return response()->json(['success' => 'Hapus data berhasil']);
+        return response()->json(['success' => 'delete data successfully']);
     }
 }

@@ -18,8 +18,10 @@ class Workshop extends Model
         'fee',
         'quota',
         'status',
-        'start_date',
-        'end_date',
+        'registration_start_date',
+        'registration_end_date',
+        'workshop_start_date',
+        'workshop_end_date',
     ];
     protected $appends = ['image_url'];
 

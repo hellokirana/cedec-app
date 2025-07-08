@@ -47,9 +47,9 @@ class AdminController extends Controller
         $data->no_telp = $request->no_telp;
         $data->alamat = $request->alamat;
         $data->status = $request->status;
-        $fileimage       = $request->file('image');
+        $fileimage = $request->file('image');
         if (!empty($fileimage)) {
-            $fileimageName   = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
+            $fileimageName = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
             Storage::putFileAs(
                 'public/user',
                 $fileimage,
@@ -92,9 +92,9 @@ class AdminController extends Controller
         $data->no_telp = $request->no_telp;
         $data->alamat = $request->alamat;
         $data->status = $request->status;
-        $fileimage       = $request->file('image');
+        $fileimage = $request->file('image');
         if (!empty($fileimage)) {
-            $fileimageName   = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
+            $fileimageName = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
             Storage::putFileAs(
                 'public/user',
                 $fileimage,
@@ -112,6 +112,6 @@ class AdminController extends Controller
     {
         $data = User::findOrFail($id);
         $data->delete();
-        return response()->json(['success' => 'hapus data berhasil']);
+        return response()->json(['success' => 'delete data successfully']);
     }
 }

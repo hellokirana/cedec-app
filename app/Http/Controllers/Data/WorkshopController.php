@@ -46,8 +46,17 @@ class WorkshopController extends Controller
 
         $data = new Workshop();
         $data->fill($request->only([
-            'title', 'description', 'workshop_start_date', 'workshop_end_date',
-            'time', 'place', 'fee', 'quota', 'status', 'registration_start_date', 'registration_end_date'
+            'title',
+            'description',
+            'workshop_start_date',
+            'workshop_end_date',
+            'time',
+            'place',
+            'fee',
+            'quota',
+            'status',
+            'registration_start_date',
+            'registration_end_date'
         ]));
 
         if ($request->hasFile('image')) {
@@ -87,8 +96,17 @@ class WorkshopController extends Controller
 
         $data = Workshop::findOrFail($id);
         $data->fill($request->only([
-            'title', 'description', 'workshop_start_date', 'workshop_end_date',
-            'time', 'place', 'fee', 'quota', 'status', 'registration_start_date', 'registration_end_date'
+            'title',
+            'description',
+            'workshop_start_date',
+            'workshop_end_date',
+            'time',
+            'place',
+            'fee',
+            'quota',
+            'status',
+            'registration_start_date',
+            'registration_end_date'
         ]));
 
         if ($request->hasFile('image')) {
@@ -100,7 +118,7 @@ class WorkshopController extends Controller
 
         $data->save();
 
-        Session::flash('success', 'Data berhasil diperbarui');
+        Session::flash('success', 'Data updated successfully');
         return redirect()->route('workshop.index');
     }
 
@@ -108,6 +126,6 @@ class WorkshopController extends Controller
     {
         $data = Workshop::findOrFail($id);
         $data->delete();
-        return response()->json(['success' => 'Hapus data berhasil']);
+        return response()->json(['success' => 'delete data successfully']);
     }
 }
