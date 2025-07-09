@@ -16,6 +16,7 @@ use App\Http\Controllers\Data\WithdrawController;
 use App\Http\Controllers\Data\WorkshopController;
 use App\Http\Controllers\Data\TestimoniController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Data\WorkshopRegistrationController;
 
 // Route untuk autentikasi (login, register, forgot password)
 Auth::routes(['verify' => true]);
@@ -41,48 +42,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin-Only Routes (pakai role superadmin)
     Route::middleware('role:superadmin')->group(function () {
-        Route::resource('/data/slider', SliderController::class);
-        Route::resource('/data/kategori', KategoriController::class);
         Route::resource('/data/bank', BankController::class);
-        Route::resource('/data/testimoni', TestimoniController::class);
         Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);
         Route::resource('/data/workshop', WorkshopController::class);
+        Route::group(['prefix' => 'data', 'middleware' => 'auth'], function () {
+            // Workshop routes yang sudah ada
+            Route::resource('workshop', WorkshopController::class);
+
+            // Workshop registration routes (tambahan baru)
+            Route::get('workshop/{workshop}/registrations', [WorkshopController::class, 'showRegistrations'])
+                ->name('workshop.registrations');
+
+            Route::get('workshop/{workshop}/registrations/{registration}/edit', [WorkshopController::class, 'editRegistration'])
+                ->name('workshop.registration.edit');
+
+            Route::put('workshop/{workshop}/registrations/{registration}', [WorkshopController::class, 'updateRegistration'])
+                ->name('workshop.registration.update');
+
+            Route::delete('workshop/{workshop}/registrations/{registration}', [WorkshopController::class, 'destroyRegistration'])
+                ->name('workshop.registration.destroy');
+        });
     });
 
-    // Worker data
-    Route::middleware('role:superadmin')->group(function () {
-        Route::resource('/data/worker', WorkerController::class);
-        Route::get('worker/create', [WorkerController::class, 'create'])->name('worker.create');
-        Route::put('/data/worker/{id}', [WorkerController::class, 'update'])->name('worker.update');
-        Route::get('workers/{id}', [WorkerController::class, 'show'])->name('worker.show');
-    });
-
-    // Order handling
-    Route::resource('/data/order', OrderController::class);
-    Route::get('/data/order/{id}/success_order', [OrderController::class, 'success_order']);
-    Route::get('/data/order/{id}/konfirmasi', [OrderController::class, 'konfirmasi']);
-    Route::post('/data/order/{id}/send_konfirmasi', [OrderController::class, 'send_konfirmasi']);
-    Route::get('/data/order/{id}/bayar_diterima', [OrderController::class, 'bayar_diterima']);
-    Route::get('/data/order/{id}/bayar_ditolak', [OrderController::class, 'bayar_ditolak']);
-    Route::get('/data/order/{id}/terima_pekerjaan', [OrderController::class, 'terima_pekerjaan']);
-    Route::get('/data/order/{id}/selesai_pekerjaan', [OrderController::class, 'selesai_pekerjaan']);
-    Route::get('/data/order/{id}/upload-proof', [OrderController::class, 'uploadProof'])->name('order.upload_proof');
-    Route::post('/data/order/{id}/upload-proof', [OrderController::class, 'uploadProof'])->name('order.upload_proof');
-    Route::post('/data/order/{id}/submit-description', [OrderController::class, 'submitDescription'])->name('order.submit_description');
-
-    // Withdraw (role: superadmin OR worker)
-    Route::middleware('role:superadmin|worker')->group(function () {
-        Route::get('/data/withdraw/{id}/diproses', [WithdrawController::class, 'diproses']);
-        Route::get('/data/withdraw/{id}/selesai', [WithdrawController::class, 'selesai']);
-        Route::get('/data/withdraw/{id}/ditolak', [WithdrawController::class, 'tolak']);
-        Route::resource('/data/withdraw', WithdrawController::class);
-    });
-
-    // Wilayah (Ajax lokasi)
-    Route::get('get-cities/{province_code}', [HomeController::class, 'getCities'])->name('get-cities');
-    Route::get('get-districts/{city_code}', [HomeController::class, 'getDistricts'])->name('get-districts');
-    Route::get('get-villages/{district_code}', [HomeController::class, 'getVillages'])->name('get-villages');
 });
 
 // Email Verification View

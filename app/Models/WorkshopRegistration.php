@@ -4,73 +4,108 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WorkshopRegistration extends Model
 {
     use HasUuids;
+
     protected $table = 'workshop_registrations';
+
     protected $fillable = [
         'user_id',
         'workshop_id',
         'time',
-        'date',
         'transfer_proof',
         'payment_status',
-        'status',
+        'status'
     ];
 
-    public function workshop(): BelongsTo
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    // Relationship dengan Workshop
+    public function workshop()
     {
-        return $this->belongsTo(workshop::class, 'workshop_id');
+        return $this->belongsTo(Workshop::class);
     }
 
-    public function user(): BelongsTo
+    // Relationship dengan User
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function score()
+    // Accessor untuk status badge
+    public function getStatusBadgeAttribute()
     {
-        return $this->hasMany(Score::class, 'registration_id');
+        $badges = [
+            'pending' => 'warning',
+            'approved' => 'success',
+            'rejected' => 'danger'
+        ];
+
+        return $badges[$this->status] ?? 'secondary';
     }
 
-    public function certificate()
+    // Accessor untuk payment status badge
+    public function getPaymentStatusBadgeAttribute()
     {
-        return $this->hasOne(Certificate::class, 'registration_id');
+        $badges = [
+            'pending' => 'warning',
+            'paid' => 'success',
+            'unpaid' => 'danger'
+        ];
+
+        return $badges[$this->payment_status] ?? 'secondary';
     }
 
+    // Accessor untuk status text
+    public function getStatusTextAttribute()
+    {
+        $statuses = [
+            'pending' => 'Pending',
+            'approved' => 'Approved',
+            'rejected' => 'Rejected'
+        ];
 
+        return $statuses[$this->status] ?? 'Unknown';
+    }
+
+    // Accessor untuk payment status text
     public function getPaymentStatusTextAttribute()
     {
-        $payment_status = payment_status();
-        return isset($payment_status[$this->payment_status]) ? $payment_status[$this->payment_status] : '';
+        $statuses = [
+            'pending' => 'Pending',
+            'paid' => 'Paid',
+            'unpaid' => 'Unpaid'
+        ];
+
+        return $statuses[$this->payment_status] ?? 'Unknown';
     }
 
-    public function getRegistrationStatusTextAttribute()
+    // Accessor untuk transfer proof URL
+    public function getTransferProofUrlAttribute()
     {
-        $registration_status = registration_status();
-        return isset($registration_status[$this->status]) ? $registration_status[$this->status] : '';
+        return $this->transfer_proof ? asset('storage/transfer_proof/' . $this->transfer_proof) : null;
     }
 
-
-    protected $appends = ['transfer_proof_url', 'average_score'];
-
-    public function getTransferproofUrlAttribute()
+    // Scope untuk filter berdasarkan status
+    public function scopeByStatus($query, $status)
     {
-        return $this->transfer_proof ? asset('storage/transfer_proof') . '/' . $this->transfer_proof : '';
+        return $query->where('status', $status);
     }
 
-    public function getAverageScoreAttribute()
+    // Scope untuk filter berdasarkan payment status
+    public function scopeByPaymentStatus($query, $paymentStatus)
     {
-        if (!$this->scores) {
-            return 0;
-        }
-
-        return $this->scores->count() > 0
-            ? round($this->scores->avg('score'), 2)
-            : 0;
+        return $query->where('payment_status', $paymentStatus);
     }
 
-
+    // Scope untuk filter berdasarkan workshop
+    public function scopeByWorkshop($query, $workshopId)
+    {
+        return $query->where('workshop_id', $workshopId);
+    }
 }

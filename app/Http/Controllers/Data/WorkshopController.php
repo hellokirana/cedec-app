@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Data;
 
 use App\Models\Workshop;
+use App\Models\WorkshopRegistration;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\DataTables\WorkshopDataTable;
+use App\DataTables\WorkshopRegistrationDataTable;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
@@ -127,5 +129,78 @@ class WorkshopController extends Controller
         $data = Workshop::findOrFail($id);
         $data->delete();
         return response()->json(['success' => 'delete data successfully']);
+    }
+
+    // Method untuk menampilkan workshop registrations
+    public function showRegistrations($workshopId)
+    {
+        $workshop = Workshop::withCount('registrations')->findOrFail($workshopId);
+        $dataTable = new WorkshopRegistrationDataTable($workshopId);
+
+        return $dataTable->render('data.workshop.registration', compact('workshop'));
+    }
+
+    // Method untuk edit registration
+    public function editRegistration($workshopId, $registrationId)
+    {
+        $workshop = Workshop::findOrFail($workshopId);
+        $registration = WorkshopRegistration::with('user')->findOrFail($registrationId);
+
+        return view('data.workshop.edit-registration', compact('workshop', 'registration'));
+    }
+
+    // Method untuk update registration
+    public function updateRegistration(Request $request, $workshopId, $registrationId)
+    {
+        $validated = Validator::make($request->all(), [
+            'time' => 'nullable|string',
+            'payment_status' => 'required|in:pending,paid,unpaid',
+            'status' => 'required|in:pending,approved,rejected',
+        ]);
+
+        if ($validated->fails()) {
+            Session::flash('warning', 'Data gagal diupdate');
+            return redirect()->back()->withErrors($validated)->withInput();
+        }
+
+        $registration = WorkshopRegistration::findOrFail($registrationId);
+        $registration->fill($request->only([
+            'time',
+            'payment_status',
+            'status'
+        ]));
+
+        // Handle transfer proof upload
+        if ($request->hasFile('transfer_proof')) {
+            // Delete old file if exists
+            if ($registration->transfer_proof) {
+                Storage::delete('public/transfer_proof/' . $registration->transfer_proof);
+            }
+
+            $file = $request->file('transfer_proof');
+            $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
+            Storage::putFileAs('public/transfer_proof', $file, $filename);
+            $registration->transfer_proof = $filename;
+        }
+
+        $registration->save();
+
+        Session::flash('success', 'Data registration berhasil diupdate');
+        return redirect()->route('workshop.registrations', $workshopId);
+    }
+
+    // Method untuk delete registration
+    public function destroyRegistration($workshopId, $registrationId)
+    {
+        $registration = WorkshopRegistration::findOrFail($registrationId);
+
+        // Delete transfer proof file if exists
+        if ($registration->transfer_proof) {
+            Storage::delete('public/transfer_proof/' . $registration->transfer_proof);
+        }
+
+        $registration->delete();
+
+        return response()->json(['success' => 'Registration deleted successfully']);
     }
 }
