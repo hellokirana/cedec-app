@@ -4,8 +4,8 @@
     <div class="container">
         <div class="card">
             <div class="card-header d-md-flex justify-content-between text-capitalize">
-                Manage Kategori
-                <a href="{{ route('kategori.create') }}" class="btn btn-primary">Add New</a>
+                Manage Study Program
+                <a href="{{ route('program.create') }}" class="btn btn-primary">Add Program</a>
    
             </div>
             <div class="card-body">

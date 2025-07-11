@@ -105,9 +105,8 @@
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="konten_menu">
-                                        <a class="dropdown-item" href="{{ url('data/slider') }}">slider</a>
-                                        <a class="dropdown-item" href="{{ url('data/testimoni') }}">testimoni</a>
-                                        <a class="dropdown-item" href="{{ url('data/bank') }}">bank</a>
+                                        <a class="dropdown-item" href="{{ url('data/program') }}">Programs</a>
+                                        <a class="dropdown-item" href="{{ url('data/bank') }}">Bank</a>
                                     </div>
                                 </li>
                             @endhasanyrole

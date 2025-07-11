@@ -6,15 +6,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Data\BankController;
 use App\Http\Controllers\Data\AdminController;
-use App\Http\Controllers\Data\OrderController;
-use App\Http\Controllers\Data\SliderController;
-use App\Http\Controllers\Data\WorkerController;
-use App\Http\Controllers\Data\LayananController;
+use App\Http\Controllers\Data\ProgramController;
 use App\Http\Controllers\Data\StudentController;
-use App\Http\Controllers\Data\KategoriController;
-use App\Http\Controllers\Data\WithdrawController;
 use App\Http\Controllers\Data\WorkshopController;
-use App\Http\Controllers\Data\TestimoniController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Data\WorkshopRegistrationController;
 
@@ -44,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);
         Route::resource('/data/workshop', WorkshopController::class);
+        Route::resource('data/program', ProgramController::class);
+
 
         Route::group(['prefix' => 'data', 'middleware' => 'auth'], function () {
             // Workshop routes yang sudah ada
