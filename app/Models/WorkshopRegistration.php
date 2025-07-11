@@ -42,6 +42,10 @@ class WorkshopRegistration extends Model
         return $this->hasOne(\App\Models\Score::class, 'registration_id');
     }
 
+    public function certificate()
+    {
+        return $this->hasOne(Certificate::class, 'registration_id');
+    }
 
     // Accessor untuk status badge
     public function getStatusBadgeAttribute()

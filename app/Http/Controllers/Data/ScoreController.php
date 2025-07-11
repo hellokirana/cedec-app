@@ -82,14 +82,22 @@ class ScoreController extends Controller
                 continue;
             }
 
+            // Simpan skor
             Score::updateOrCreate(
                 ['registration_id' => $registration->id],
-                ['score' => $score]
+                [
+                    'user_id' => $user->id,
+                    'score' => $score
+                ]
             );
+
+            // ✅ Update status menjadi "Completed" (4)
+            $registration->update(['status' => 4]);
 
             $successCount++;
         }
 
         return back()->with('success', "Import complete. Success: $successCount, Failed: $failCount");
     }
+
 }

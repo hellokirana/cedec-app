@@ -189,41 +189,30 @@ class FrontendController extends Controller
         return view('frontend.my_workshop', compact('registrations', 'search', 'status', 'fee'));
     }
 
+    // app/Http/Controllers/FrontendController.php
+
     public function result()
     {
-        try {
-            // Get current authenticated user
-            $user = auth()->user();
+        $user = auth()->user();
 
-            if (!$user) {
-                return redirect()->route('login')->with('error', 'Please login first');
-            }
-
-            // Get workshop registrations using Eloquent with relationships
-            $registrations = WorkshopRegistration::with([
-                'workshop:id,title',
-                'score:id,registration_id,score,created_at',
-                'certificate:id,registration_id,certificate'
-            ])
-                ->where('user_id', $user->id)
-                ->where('status', '4')
-                ->where('payment_status', '2')
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-
-            return view('frontend.result', compact('registrations'));
-
-        } catch (\Exception $e) {
-            // Log error for debugging
-            logger('Result page error: ' . $e->getMessage());
-
-            // Return empty paginated collection to prevent blade errors
-            $registrations = WorkshopRegistration::where('id', 0)->paginate(10);
-
-            return view('frontend.result', compact('registrations'))
-                ->with('error', 'Unable to load results at this time.');
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Please login first');
         }
+
+        $registrations = \App\Models\WorkshopRegistration::with([
+            'workshop:id,title',
+            'score:id,registration_id,score,created_at',
+            'certificate:id,registration_id,certificate'
+        ])
+            ->where('user_id', $user->id)
+            ->where('status', 4)
+            ->where('payment_status', 2)
+            ->latest()
+            ->paginate(10);
+
+        return view('frontend.result', compact('registrations'));
     }
+
 
 
     public function downloadCertificate($registration_id)
