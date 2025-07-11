@@ -43,8 +43,7 @@ class HomeController extends Controller
     public function profil()
     {
         $data = Auth::user();
-        $provinces = province::whereIn('code', ['36', '32', '31'])->get();
-        return view('frontend.profil', compact('data', 'provinces'));
+        return view('frontend.profil', compact('data'));
     }
 
 
@@ -126,74 +125,4 @@ class HomeController extends Controller
         }
     }
 
-    public function member(MemberDataTable $dataTable)
-    {
-        return $dataTable->render('data.user.member.index');
-    }
-
-    public function kontak(KontakDataTable $dataTable)
-    {
-        return $dataTable->render('data.kontak.index');
-    }
-
-    public function pesan($id)
-    {
-        $data = Layanan::with('kategori')->where('status', 1)->where('id', $id)->first();
-        if (empty($data)) {
-            return redirect()->back()->with('error', 'data tidak ditemukan');
-        }
-        $provinces = province::whereIn('code', ['36', '32', '31'])->get();
-        $user = Auth::user();
-        return view('frontend.pesan', compact('data', 'provinces', 'user'));
-    }
-
-    public function send_order(Request $request)
-    {
-        $validated = Validator::make($request->all(), [
-            'layanan_id' => 'required|exists:layanans,id',
-            'waktu' => 'required',
-            'no_telp' => 'required',
-            'alamat' => 'required',
-            'province_code' => 'required|exists:indonesia_provinces,code',
-            'city_code' => 'required|exists:indonesia_cities,code',
-            'district_code' => 'required|exists:indonesia_districts,code',
-            'village_code' => 'required|exists:indonesia_villages,code',
-        ]);
-
-        if ($validated->fails()) {
-            return redirect()->back()->withErrors($validated)->withInput();
-        }
-        $requestDate = $request->waktu; // Assume this is in 'Y-m-d' format
-        $serviceTime = $request->jam;  // Assume this is in 'H:i:s' format
-
-        // Combine the date and time
-        $combinedDateTime = $requestDate . ' ' . $serviceTime;
-
-        // Parse the combined date and time
-        $dateTime = new DateTime($combinedDateTime);
-
-        $layanan = Layanan::with('kategori')->find($request->layanan_id);
-        if (!$layanan) {
-            return redirect()->back()->with('error', 'Layanan tidak ditemukan.');
-        }
-
-        $order = new Order();
-        $order->layanan_id = $request->layanan_id;
-        $order->kategori_id = $layanan->kategori_id;
-        $order->customer_id = Auth::user()->id;
-        $order->harga_member = $layanan->harga_member;
-        $order->harga_worker = $layanan->harga_worker;
-        $order->nominal = $layanan->harga_member + rand(100, 999);
-        $order->waktu = $dateTime;
-        $order->alamat = $request->alamat;
-        $order->province_code = $request->province_code;
-        $order->city_code = $request->city_code;
-        $order->district_code = $request->district_code;
-        $order->village_code = $request->village_code;
-        $order->status_pembayaran = 1;
-        $order->status_order = 1;
-        $order->save();
-
-        return redirect('data/order/' . $order->id . '/success_order')->with('success', 'order berhasil di buat');
-    }
 }

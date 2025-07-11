@@ -10,12 +10,13 @@ use App\Models\Kategori;
 use App\Models\Workshop;
 use App\Models\Testimoni;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\WorkshopRegistration;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 
 class FrontendController extends Controller
 {
@@ -143,8 +144,6 @@ class FrontendController extends Controller
         return redirect()->back()->with('success', 'Registration successful!');
     }
 
-
-
     public function my_workshop(Request $request)
     {
         // Validasi input
@@ -243,11 +242,34 @@ class FrontendController extends Controller
         return response()->download(storage_path('app/certificates/' . $registration->certificate->file_path));
     }
 
-    public function contact()
+    public function showStudentProfile()
     {
-        $slider_all = Slider::where('status', 1)->orderBy('queue')->get();
-        $workshop_all = Workshop::where('status', 1)->latest()->limit(6)->get();
-        return view('frontend.contact', compact('slider_all', 'workshop_all'));
+        $user = Auth::user();
+        return view('frontend.profile', compact('user'));
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        // Hapus avatar lama jika ada
+        if ($user->avatar && Storage::disk('public')->exists('avatars/' . $user->avatar)) {
+            Storage::disk('public')->delete('avatars/' . $user->avatar);
+        }
+
+        // Simpan avatar baru
+        $avatarName = uniqid() . '.' . $request->avatar->extension();
+        $request->avatar->storeAs('avatars', $avatarName, 'public');
+
+        // Update ke database
+        $user->avatar = $avatarName;
+        $user->save();
+
+        return back()->with('success', 'Profile picture updated successfully!');
     }
 
 }

@@ -53,6 +53,7 @@
                                     <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                         <ul class="navigation">
                                             @auth
+                                            @if(Auth::user()->email_verified_at)
                                             <li>
                                                 <a href="{{ url('/') }}">Home</a>
                                             </li>
@@ -69,6 +70,7 @@
                                             <li>
                                                 <a href="{{ url('/contact') }}">Contact</a>
                                             </li>
+                                            @endif
                                             @endauth
                                         </ul>
                                     </div>
@@ -88,7 +90,7 @@
                         @else
                             <div class="dropdown d-flex align-items-center gap-2">
                                 <img 
-                                    src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/images/icons/default-avatar.png') }}" 
+                                    src="{{ Auth::user()->avatar ? asset('storage/avatars/' . Auth::user()->avatar) : asset('assets/images/icons/default-avatar.png') }}" 
                                     alt="Avatar"
                                     class="rounded-circle"
                                     style="width: 32px; height: 32px; object-fit: cover;"
@@ -98,7 +100,7 @@
                                     {{ Auth::user()->name }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ url('/profil') }}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('student.profile') }}">Profile</a></li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -160,7 +162,7 @@
                         {{ Auth::user()->name }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ url('/profil') }}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('student.profile') }}">Profile</a></li>
                         <li>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

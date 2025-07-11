@@ -30,17 +30,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/send_workshop_registration', [FrontendController::class, 'send_workshop_registration'])->name('send_workshop_registration');
     Route::get('/result', action: [FrontendController::class, 'result']);
     Route::get('/contact', action: [FrontendController::class, 'contact']);
+    Route::get('/profile', [FrontendController::class, 'showStudentProfile'])->name('student.profile');
+    Route::post('/profile/update-avatar', [FrontendController::class, 'updateAvatar'])->name('student.profile.avatar.update');
 
-    // Profil & Dashboard
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/profil', [HomeController::class, 'profil'])->name('profil');
-    Route::post('/update_profil', [HomeController::class, 'update_profil'])->name('update_profil');
-
-    // Pesan & Workshop
-    Route::get('/pesan/{id}', [HomeController::class, 'pesan'])->name('pesan');
 
     // Admin-Only Routes (pakai role superadmin)
     Route::middleware('role:superadmin')->group(function () {
+        Route::get('/home', [HomeController::class, 'index'])->name('home');
+        Route::get('/profil', [HomeController::class, 'profil'])->name('profil');
+        Route::post('/update_profil', [HomeController::class, 'update_profil'])->name('update_profil');
+
         Route::resource('/data/bank', BankController::class);
         Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);
