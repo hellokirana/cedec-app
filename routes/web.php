@@ -10,6 +10,7 @@ use App\Http\Controllers\Data\ScoreController;
 use App\Http\Controllers\Data\ProgramController;
 use App\Http\Controllers\Data\StudentController;
 use App\Http\Controllers\Data\WorkshopController;
+use App\Http\Controllers\Data\CertificateController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Data\WorkshopRegistrationController;
 
@@ -28,6 +29,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/contact', action: [FrontendController::class, 'contact']);
     Route::get('/profile', [FrontendController::class, 'showStudentProfile'])->name('student.profile');
     Route::post('/profile/update-avatar', [FrontendController::class, 'updateAvatar'])->name('student.profile.avatar.update');
+    Route::get('/my-certificate/{registration_id}/download', [FrontendController::class, 'downloadCertificate'])
+        ->name('download.certificate');
 
 
     // Admin-Only Routes (pakai role superadmin)
@@ -36,13 +39,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/profil', [HomeController::class, 'profil'])->name('profil');
         Route::get('/data/score', [ScoreController::class, 'index'])->name('score.index');
         Route::get('/data/score/upload', [ScoreController::class, 'upload'])->name('score.upload');
+        Route::get('/data/certificate', [CertificateController::class, 'index'])->name('certificate.index');
+        Route::post('/data/certificate/upload/{registration}', [CertificateController::class, 'upload'])->name('certificate.upload');
         Route::post('/update_profil', [HomeController::class, 'update_profil'])->name('update_profil');
+        Route::get('data/certificate/{registration}/edit', [CertificateController::class, 'edit'])->name('certificate.edit');
+        Route::post('data/certificate/{registration}/update', [CertificateController::class, 'update'])->name('certificate.update');
+
 
         Route::resource('/data/bank', BankController::class);
         Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);
         Route::resource('/data/workshop', WorkshopController::class);
         Route::resource('/data/program', ProgramController::class);
+
 
 
 

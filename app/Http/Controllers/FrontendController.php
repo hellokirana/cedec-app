@@ -199,10 +199,10 @@ class FrontendController extends Controller
             return redirect()->route('login')->with('error', 'Please login first');
         }
 
-        $registrations = \App\Models\WorkshopRegistration::with([
+        $registrations = WorkshopRegistration::with([
             'workshop:id,title',
             'score:id,registration_id,score,created_at',
-            'certificate:id,registration_id,certificate'
+            'certificate:id,registration_id,certificate,created_at'
         ])
             ->where('user_id', $user->id)
             ->where('status', 4)
@@ -220,7 +220,8 @@ class FrontendController extends Controller
         $registration = WorkshopRegistration::with([
             'workshop',
             'certificate'
-        ])->where('id', $registration_id)
+        ])
+            ->where('id', $registration_id)
             ->where('user_id', auth()->id())
             ->first();
 
@@ -228,8 +229,15 @@ class FrontendController extends Controller
             return redirect()->back()->with('error', 'Certificate not found.');
         }
 
-        return response()->download(storage_path('app/certificates/' . $registration->certificate->file_path));
+        $filePath = storage_path('app/public/certificates/' . $registration->certificate->certificate);
+
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'Certificate file missing.');
+        }
+
+        return response()->download($filePath);
     }
+
 
     public function showStudentProfile()
     {

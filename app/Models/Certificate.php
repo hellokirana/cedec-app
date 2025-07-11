@@ -23,4 +23,8 @@ class Certificate extends Model
     {
         return $this->belongsTo(WorkshopRegistration::class, 'registration_id');
     }
+    public function getCertificateUrlAttribute()
+    {
+        return $this->certificate ? asset('storage/certificates/' . $this->certificate) : null;
+    }
 }

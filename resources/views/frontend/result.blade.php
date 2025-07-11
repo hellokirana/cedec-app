@@ -32,13 +32,21 @@
                         @forelse ($registrations as $index => $registration)
                             <tr>
                                 <td>{{ $registrations->firstItem() + $index }}</td>
-                                <td>
-                                    @if ($registration->score)
-                                        {{ \Carbon\Carbon::parse($registration->score->created_at)->format('d M Y') }}
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
+                                @php
+    $scoreDate = optional($registration->score)->created_at;
+    $certificateDate = optional($registration->certificate)->created_at;
+
+    $earliestDate = collect([$scoreDate, $certificateDate])->filter()->sort()->first();
+@endphp
+
+<td>
+    @if ($earliestDate)
+        {{ $earliestDate->format('d M Y') }}
+    @else
+        <span class="text-muted">-</span>
+    @endif
+</td>
+
                                 <td>{{ $registration->workshop->title ?? 'N/A' }}</td>
                                 <td><span class="badge bg-success">Completed</span></td>
                                 <td>
