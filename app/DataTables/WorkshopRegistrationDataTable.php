@@ -36,28 +36,32 @@ class WorkshopRegistrationDataTable extends DataTable
                 return '<span class="text-muted">No proof</span>';
             })
             ->editColumn('payment_status', function ($model) {
+                $statuses = payment_status();
+                $text = $statuses[$model->payment_status] ?? 'Unknown';
+
                 $badgeClass = match ($model->payment_status) {
-                    'pending' => 'badge-warning',
-                    'paid' => 'badge-success',
-                    'unpaid' => 'badge-danger',
-                    default => 'badge-secondary'
+                    1 => 'bg-warning',
+                    2 => 'bg-success',
+                    3 => 'bg-danger',
+                    default => 'bg-secondary'
                 };
-                return '<span class="badge ' . $badgeClass . '">' . ucfirst($model->payment_status) . '</span>';
+
+                return '<span class="badge ' . $badgeClass . '">' . $text . '</span>';
             })
             ->editColumn('status', function ($model) {
+                $statuses = registration_status();
+                $text = $statuses[$model->status] ?? 'Unknown';
+
                 $badgeClass = match ($model->status) {
-                    'pending' => 'badge-warning',
-                    'approved' => 'badge-success',
-                    'rejected' => 'badge-danger',
-                    default => 'badge-secondary'
+                    1 => 'bg-secondary',
+                    2 => 'bg-info',
+                    3 => 'bg-warning',
+                    4 => 'bg-success',
+                    5 => 'bg-danger',
+                    default => 'bg-light'
                 };
-                return '<span class="badge ' . $badgeClass . '">' . ucfirst($model->status) . '</span>';
-            })
-            ->editColumn('created_at', function ($model) {
-                return $model->created_at ? $model->created_at->format('d M Y H:i') : '-';
-            })
-            ->orderColumn('created_at', function ($query, $order) {
-                $query->orderBy('workshop_registrations.created_at', $order);
+
+                return '<span class="badge ' . $badgeClass . '">' . $text . '</span>';
             })
             ->addColumn('action', function ($row) {
                 $editUrl = route('workshop.registration.edit', [$this->workshopId, $row->id]);
@@ -76,6 +80,8 @@ class WorkshopRegistrationDataTable extends DataTable
         return $model->newQuery()
             ->where('workshop_id', $this->workshopId)
             ->with(['workshop', 'user'])
+            ->where('workshop_registrations.status', 2)
+            ->select('workshop_registrations.*')
             ->orderBy('workshop_registrations.created_at', 'desc');
     }
 
@@ -97,8 +103,7 @@ class WorkshopRegistrationDataTable extends DataTable
             Column::make('time')->title('Waktu Daftar'),
             Column::make('transfer_proof')->title('Bukti Transfer')->orderable(false)->searchable(false),
             Column::make('payment_status')->title('Status Pembayaran'),
-            Column::make('status')->title('Status'),
-            Column::make('created_at')->title('Tanggal Daftar'),
+            Column::make('status')->title('Status')->name('status')->data('status'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

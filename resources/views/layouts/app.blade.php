@@ -66,20 +66,12 @@
                                 <a class="nav-link" href="{{ url('home') }}">dashboard</a>
                             </li>
 
-                            <li class="nav-item dropdown">
-                                    <a id="layanan_menu" class="nav-link dropdown-toggle" href="#" role="button"
-                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                        Workshop
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user_menu">
-                                        <a class="dropdown-item" href="{{ url('data/workshop') }}">Workshop List</a>
-                                        <a class="dropdown-item" href="{{ url('data/admin') }}">Workshop Registration</a>
-                                    </div>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('data/workshop') }}">Workshop</a>
+                            </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url('data/order') }}">Payment Confirmation</a>
+                                <a class="nav-link" href="{{ route('payment.confirmation') }}">Payment Confirmation</a>
                             </li>
 
                             <li class="nav-item dropdown">
@@ -261,10 +253,6 @@
         </script>
     @endif
     @stack('scripts')
-
-
-
-
 </body>
 
 </html>

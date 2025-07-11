@@ -97,19 +97,19 @@ class FrontendController extends Controller
                 : 'nullable',
         ]);
 
-
         $workshop = Workshop::findOrFail($request->workshop_id);
         $user = Auth::user();
 
-        // 🔒 Cek status workshop, hanya bisa daftar kalau status == 1 (Registration Open)
+        // 🔒 Pastikan status workshop masih terbuka (status = 1)
         if ($workshop->status != 1) {
             return back()->with('error', 'Registration is closed for this workshop.');
         }
 
-        // Cek apakah user sudah pernah daftar
+        // 🔄 Cek apakah user sudah pernah mendaftar
         $existing = WorkshopRegistration::where('user_id', $user->id)
             ->where('workshop_id', $workshop->id)
             ->first();
+
         if ($existing) {
             return back()->with('error', 'You have already registered for this workshop.');
         }
@@ -118,28 +118,31 @@ class FrontendController extends Controller
             'user_id' => $user->id,
             'workshop_id' => $workshop->id,
             'time' => now(),
-            'status' => 2, // Registered
             'created_at' => now(),
             'updated_at' => now(),
         ];
 
         if ($workshop->fee == 0) {
-            // Free workshop
-            $data['payment_status'] = 2; // Paid/Confirmed langsung
+            // Free Workshop
+            $data['payment_status'] = 2; // Completed langsung
+            $data['status'] = 2;          // Registered
             $data['transfer_proof'] = null;
         } else {
-            // Paid workshop
+            // Paid Workshop
+            $data['payment_status'] = 1; // Under Review
+            $data['status'] = 1;         // Not Registered
+
             if ($request->hasFile('transfer_proof')) {
                 $filename = $request->file('transfer_proof')->store('transfer_proofs', 'public');
                 $data['transfer_proof'] = $filename;
             }
-            $data['payment_status'] = 1; // Menunggu konfirmasi admin
         }
 
         WorkshopRegistration::create($data);
 
         return redirect()->back()->with('success', 'Registration successful!');
     }
+
 
 
     public function my_workshop(Request $request)

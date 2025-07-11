@@ -23,7 +23,6 @@ Auth::routes(['verify' => true]);
 
 // Halaman yang hanya bisa diakses oleh user login & verified
 Route::middleware(['auth', 'verified'])->group(function () {
-    // ✅ Halaman frontend yang dilindungi login
     Route::get('/', [FrontendController::class, 'index']);
     Route::get('/workshop', [FrontendController::class, 'workshop']);
     Route::get('/workshop/{id}', [FrontendController::class, 'workshop_detail']);
@@ -46,23 +45,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);
         Route::resource('/data/workshop', WorkshopController::class);
+
         Route::group(['prefix' => 'data', 'middleware' => 'auth'], function () {
             // Workshop routes yang sudah ada
-            Route::resource('workshop', WorkshopController::class);
+            Route::resource('registration', WorkshopRegistrationController::class);
 
             // Workshop registration routes (tambahan baru)
-            Route::get('workshop/{workshop}/registrations', [WorkshopController::class, 'showRegistrations'])
-                ->name('workshop.registrations');
+            Route::get('workshop-registration/{workshop}/', [WorkshopRegistrationController::class, 'showRegistrations'])
+                ->name('registrations');
 
-            Route::get('workshop/{workshop}/registrations/{registration}/edit', [WorkshopController::class, 'editRegistration'])
+            Route::get('workshop/{workshop}/registrations/{registration}/edit', [WorkshopRegistrationController::class, 'editRegistration'])
                 ->name('workshop.registration.edit');
 
-            Route::put('workshop/{workshop}/registrations/{registration}', [WorkshopController::class, 'updateRegistration'])
+            Route::put('workshop/{workshop}/registrations/{registration}', [WorkshopRegistrationController::class, 'updateRegistration'])
                 ->name('workshop.registration.update');
 
-            Route::delete('workshop/{workshop}/registrations/{registration}', [WorkshopController::class, 'destroyRegistration'])
+            Route::delete('workshop/{workshop}/registrations/{registration}', [WorkshopRegistrationController::class, 'destroyRegistration'])
                 ->name('workshop.registration.destroy');
+
+            Route::get('workshop-registration/{id}/confirm', [WorkshopRegistrationController::class, 'confirm']);
+            Route::get('workshop-registration/{id}/reject', [WorkshopRegistrationController::class, 'reject']);
         });
+
+        // Payment Confirmation Routes - DIPINDAHKAN KE DALAM GRUP SUPERADMIN
+        Route::get('/payment/confirmation', [WorkshopRegistrationController::class, 'paymentConfirmation'])
+            ->name('payment.confirmation');
+
+        Route::get('data/workshop-registration/{id}/confirm', [WorkshopRegistrationController::class, 'confirm']);
+        Route::get('data/workshop-registration/{id}/reject', [WorkshopRegistrationController::class, 'reject']);
+
     });
 
 });

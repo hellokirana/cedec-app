@@ -26,7 +26,7 @@ class WorkshopDataTable extends DataTable
             ->addColumn('action', function ($row) {
                 $editUrl = url('data/workshop/' . $row->id . '/edit');
                 $deleteUrl = route('workshop.destroy', $row->id);
-                $registrationsUrl = route('workshop.registrations', $row->id);
+                $registrationsUrl = route('registrations', $row->id);
 
                 return '
                     <a href="' . $registrationsUrl . '" class="btn btn-info btn-sm mx-1" title="View Registrations"><i class="ri-group-line"></i></a>

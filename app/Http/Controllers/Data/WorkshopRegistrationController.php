@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Data;
 
-use App\Models\Workshop;
-use App\Models\User;
 use App\Models\Bank;
+use App\Models\User;
+use App\Models\Workshop;
 use Illuminate\Http\Request;
-use App\Models\WorkshopRegistration;
+use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use App\Models\WorkshopRegistration;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Http;
-use Yajra\DataTables\DataTables;
+use App\DataTables\PaymentConfirmationDataTable;
+use App\DataTables\WorkshopRegistrationDataTable;
 
 class WorkshopRegistrationController extends Controller
 {
@@ -35,99 +37,121 @@ class WorkshopRegistrationController extends Controller
         return response()->json(['success' => 'Registration deleted successfully.']);
     }
 
-    // === Payment Confirmation Flow ===
-    public function successOrder($id)
+    public function showRegistrations($workshopId)
     {
-        $registration = WorkshopRegistration::with(['workshop', 'user'])->findOrFail($id);
-        $banks = Bank::where('status', 1)->orderBy('no_urut')->get();
+        $workshop = Workshop::withCount('registrations')->findOrFail($workshopId);
+        $dataTable = new WorkshopRegistrationDataTable($workshopId);
 
-        return view('data.registration.success_order', compact('registration', 'banks'));
+        return $dataTable->render('data.registration.index', compact('workshop'));
     }
 
-    public function showConfirmationForm($id)
+    // Method untuk edit registration
+    public function editRegistration($workshopId, $registrationId)
     {
-        $registration = WorkshopRegistration::with(['workshop', 'user'])->findOrFail($id);
-        $banks = Bank::where('status', 1)->orderBy('no_urut')->get();
+        $workshop = Workshop::findOrFail($workshopId);
+        $registration = WorkshopRegistration::with('user')->findOrFail($registrationId);
 
-        return view('data.registration.confirmation', compact('registration', 'banks'));
+        return view('data.workshop.edit-registration', compact('workshop', 'registration'));
     }
 
-    public function submitConfirmation(Request $request, $id)
+    // Method untuk update registration
+    public function updateRegistration(Request $request, $workshopId, $registrationId)
     {
-        $validator = Validator::make($request->all(), [
-            'transfer_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'payment_status' => 'required|in:pending,paid,failed',
-            'g-recaptcha-response' => 'required',
+        $validated = Validator::make($request->all(), [
+            'time' => 'nullable|string',
+            'payment_status' => 'required|in:pending,paid,unpaid',
+            'status' => 'required',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+        if ($validated->fails()) {
+            Session::flash('warning', 'Data gagal diupdate');
+            return redirect()->back()->withErrors($validated)->withInput();
         }
 
-        // reCAPTCHA validation
-        $response = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
-            'secret' => env('RECAPTCHA_SECRET_KEY'),
-            'response' => $request->input('g-recaptcha-response'),
-            'remoteip' => $request->ip()
-        ]);
+        $registration = WorkshopRegistration::findOrFail($registrationId);
+        $registration->fill($request->only([
+            'time',
+            'payment_status',
+            'status'
+        ]));
 
-        if (!$response->json('success')) {
-            return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA verification failed.']);
-        }
-
-        $registration = WorkshopRegistration::findOrFail($id);
-
+        // Handle transfer proof upload
         if ($request->hasFile('transfer_proof')) {
+            // Delete old file if exists
+            if ($registration->transfer_proof) {
+                Storage::delete('public/transfer_proof/' . $registration->transfer_proof);
+            }
+
             $file = $request->file('transfer_proof');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('public/transfer_proofs', $filename);
+            $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
+            Storage::putFileAs('public/transfer_proof', $file, $filename);
             $registration->transfer_proof = $filename;
         }
 
-        $registration->payment_status = $request->payment_status;
         $registration->save();
 
-        return redirect('/data/registration')->with('success', 'Payment confirmation submitted.');
+        Session::flash('success', 'Data registration berhasil diupdate');
+        return redirect()->route('workshop.registrations', $workshopId);
     }
 
-    public function approvePayment($id)
+    // Method untuk delete registration
+    public function destroyRegistration($workshopId, $registrationId)
     {
-        $registration = WorkshopRegistration::findOrFail($id);
-        $registration->payment_status = 'paid';
-        $registration->status = 'approved';
-        $registration->save();
+        $registration = WorkshopRegistration::findOrFail($registrationId);
 
-        return redirect('/data/registration')->with('success', 'Payment marked as approved.');
+        // Delete transfer proof file if exists
+        if ($registration->transfer_proof) {
+            Storage::delete('public/transfer_proof/' . $registration->transfer_proof);
+        }
+
+        $registration->delete();
+
+        return response()->json(['success' => 'Registration deleted successfully']);
     }
 
-    public function rejectPayment($id)
+    public function paymentConfirmation(PaymentConfirmationDataTable $dataTable)
     {
-        $registration = WorkshopRegistration::findOrFail($id);
-        $registration->payment_status = 'failed';
-        $registration->status = 'rejected';
-        $registration->save();
+        // Get payment statistics
+        $stats = [
+            'under_review' => WorkshopRegistration::whereHas('workshop', function ($query) {
+                $query->where('fee', '>', 0);
+            })->where('payment_status', 1)->count(),
 
-        return redirect('/data/registration')->with('success', 'Payment marked as rejected.');
+            'completed' => WorkshopRegistration::whereHas('workshop', function ($query) {
+                $query->where('fee', '>', 0);
+            })->where('payment_status', 2)->count(),
+
+            'rejected' => WorkshopRegistration::whereHas('workshop', function ($query) {
+                $query->where('fee', '>', 0);
+            })->where('payment_status', 3)->count(),
+
+            'total' => WorkshopRegistration::whereHas('workshop', function ($query) {
+                $query->where('fee', '>', 0);
+            })->whereNotNull('transfer_proof')->count()
+        ];
+
+        return $dataTable->render('data.registration.payment-confirmation', compact('stats'));
     }
 
-    // === Participant View per Workshop ===
-    public function viewParticipants(Workshop $workshop)
+    public function confirm($id)
     {
-        return view('data.participant.show', compact('workshop'));
+        $data = WorkshopRegistration::findOrFail($id);
+        $data->payment_status = 2;
+        $data->status = 2;
+        $data->save();
+
+        return redirect()->back()->with('success', 'Payment has been confirmed');
     }
 
-    public function getParticipantsData(Workshop $workshop)
+    public function reject($id)
     {
-        $data = WorkshopRegistration::with('user')
-            ->where('workshop_id', $workshop->id)
-            ->latest();
+        $data = WorkshopRegistration::findOrFail($id);
+        $data->payment_status = 3;
+        $data->status = 1;
+        $data->save();
 
-        return DataTables::of($data)
-            ->addColumn('name', fn ($row) => $row->user->name ?? '-')
-            ->addColumn('email', fn ($row) => $row->user->email ?? '-')
-            ->editColumn('created_at', fn ($row) => $row->created_at->format('d-m-Y H:i'))
-            ->addColumn('action', fn ($row) => '<a href="/data/registration/' . $row->id . '" class="btn btn-primary btn-sm">Detail</a>')
-            ->rawColumns(['action'])
-            ->make(true);
+        return redirect()->back()->with('success', 'Payment has been rejected');
     }
+
+
 }
