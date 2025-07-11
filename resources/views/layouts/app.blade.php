@@ -94,7 +94,7 @@
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user_menu">
-                                        <a class="dropdown-item" href="{{ url('data/member') }}">Score</a>
+                                        <a class="dropdown-item" href="{{ route('score.index') }}">Score</a>
                                         <a class="dropdown-item" href="{{ url('data/admin') }}">Sertificate</a>
                                     </div>
                                 </li>

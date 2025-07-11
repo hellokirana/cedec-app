@@ -6,11 +6,13 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Data\BankController;
 use App\Http\Controllers\Data\AdminController;
+use App\Http\Controllers\Data\ScoreController;
 use App\Http\Controllers\Data\ProgramController;
 use App\Http\Controllers\Data\StudentController;
 use App\Http\Controllers\Data\WorkshopController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Data\WorkshopRegistrationController;
+
 
 // Route untuk autentikasi (login, register, forgot password)
 Auth::routes(['verify' => true]);
@@ -32,18 +34,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:superadmin')->group(function () {
         Route::get('/home', [HomeController::class, 'index'])->name('home');
         Route::get('/profil', [HomeController::class, 'profil'])->name('profil');
+        Route::get('/data/score', [ScoreController::class, 'index'])->name('score.index');
+        Route::get('/data/score/upload', [ScoreController::class, 'upload'])->name('score.upload');
         Route::post('/update_profil', [HomeController::class, 'update_profil'])->name('update_profil');
 
         Route::resource('/data/bank', BankController::class);
         Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);
         Route::resource('/data/workshop', WorkshopController::class);
-        Route::resource('data/program', ProgramController::class);
+        Route::resource('/data/program', ProgramController::class);
+
 
 
         Route::group(['prefix' => 'data', 'middleware' => 'auth'], function () {
             // Workshop routes yang sudah ada
             Route::resource('registration', WorkshopRegistrationController::class);
+
+            Route::get('/score/upload', [ScoreController::class, 'showUploadForm'])->name('score.upload');
+            Route::post('/score/import', [ScoreController::class, 'importScores'])->name('score.import');
 
             // Workshop registration routes (tambahan baru)
             Route::get('workshop-registration/{workshop}/', [WorkshopRegistrationController::class, 'showRegistrations'])
