@@ -77,9 +77,10 @@ class WorkshopController extends Controller
 
     public function edit($id)
     {
-        $data = Workshop::findOrFail($id);
-        return view('data.workshop.edit', compact('data'));
+        $workshop = Workshop::findOrFail($id);
+        return view('data.workshop.edit', compact('workshop'));
     }
+
 
     public function update(Request $request, $id)
     {

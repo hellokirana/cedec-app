@@ -28,7 +28,8 @@ if (!function_exists('workshop_status')) {
         return array(
             1 => 'Registration Open',
             2 => 'Ongoing',
-            3 => 'Closed',
+            3 => 'Completed',
+            4 => 'Upcoming',
         );
     }
 }

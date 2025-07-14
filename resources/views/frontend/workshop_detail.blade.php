@@ -64,7 +64,7 @@
                             Register before: <strong>{{ \Carbon\Carbon::parse($data->registration_end_date)->format('d M Y') }}</strong> |
                             <strong>{{ $data->quota }} Participant left</strong>
                         </p>
-                        <p class="mb-3">{{ $data->description }}</p>
+                        <p class="mb-3">{!! $data->description !!}</p>
 
                         <ul class="list-unstyled text-secondary small">
                             <li><i class="fa-solid fa-money-bill-wave me-2"></i>

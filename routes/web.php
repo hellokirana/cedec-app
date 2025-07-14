@@ -45,7 +45,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('data/certificate/{registration}/edit', [CertificateController::class, 'edit'])->name('certificate.edit');
         Route::post('data/certificate/{registration}/update', [CertificateController::class, 'update'])->name('certificate.update');
 
-
         Route::resource('/data/bank', BankController::class);
         Route::resource('/data/student', StudentController::class);
         Route::resource('/data/admin', AdminController::class);

@@ -20,10 +20,11 @@
                             </div>
 
                             <!-- Deskripsi -->
-                            <div class="col-12">
-                                <x-form.textarea label="Deskripsi" name="description"
-                                    value="{{ old('description') }}" :error="$errors->first('description')" rows="4" />
-                            </div>
+                            <div class="col-12 mt-4">
+                                    <label>Description</label>
+                                    <x-form.textarea for="description" name="description" :value="old('description')"
+                                        :error="$errors->first('description')"></x-form.textarea>
+                                </div>
 
                             <!-- Tanggal Mulai & Selesai -->
                             <div class="col-md-6">
@@ -98,3 +99,28 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.ckeditor.com/ckeditor5/23.0.0/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#description'), {
+                toolbar: {
+                    items: [
+                        'undo', 'redo',
+                        '|',
+                        'heading',
+                        '|',
+                        'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
+                        '|',
+                        'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
+                        '|',
+                        'link', 'uploadImage', 'blockQuote', 'codeBlock',
+                        '|',
+                        'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent'
+                    ],
+                    shouldNotGroupWhenFull: false
+                }
+            });
+    </script>
+@endpush

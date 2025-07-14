@@ -101,11 +101,11 @@
                                 <li class="nav-item dropdown">
                                     <a id="konten_menu" class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                        Setting
+                                        Settings
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="konten_menu">
-                                        <a class="dropdown-item" href="{{ url('data/program') }}">Programs</a>
+                                        <a class="dropdown-item" href="{{ url('data/program') }}">Program</a>
                                         <a class="dropdown-item" href="{{ url('data/bank') }}">Bank</a>
                                     </div>
                                 </li>
@@ -137,8 +137,10 @@
 
         <main class="py-4">
             @yield('content')
+            
         </main>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
         integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
@@ -149,7 +151,7 @@
             csrfToken: '{{ csrf_token() }}'
         };
     </script>
-    <script src="{{ asset('js/address-dropdown.js') }}"></script>
+    
     <script>
         $('.dropify').dropify();
     </script>
