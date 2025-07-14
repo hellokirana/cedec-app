@@ -28,9 +28,15 @@
 
         @if($data->status != 1)
             <div class="alert alert-warning">
-                <i class="fa-solid fa-circle-exclamation me-2"></i>Registration is closed for this workshop.
+                <i class="fa-solid fa-circle-exclamation me-2"></i>
+                @if($data->status == 4)
+                    Registration has not started yet.
+                @else
+                    Registration is closed for this workshop.
+                @endif
             </div>
         @endif
+
 
         <div class="row g-4">
             <!-- Poster (Kiri) -->
@@ -62,7 +68,7 @@
                         <h4 class="fw-bold">{{ $data->title }}</h4>
                         <p class="text-muted mb-1">
                             Register before: <strong>{{ \Carbon\Carbon::parse($data->registration_end_date)->format('d M Y') }}</strong> |
-                            <strong>{{ $data->quota }} Participant left</strong>
+                            <strong>{{ $data->quota }} Participant Quota</strong>
                         </p>
                         <p class="mb-3">{!! $data->description !!}</p>
 

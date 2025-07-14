@@ -81,14 +81,6 @@
                         <x-form.file label="Gambar / Poster Workshop" name="image"
                             value="{{ old('image') }}" :error="$errors->first('image')" />
 
-                        <!-- Status -->
-                        <div class="form-group mt-3">
-                            <label>Status</label>
-                            {{ Form::select('status', status_publish(), old('status'), ['class' => 'form-select']) }}
-                            @if ($errors->first('status'))
-                                <small class="text-danger">{{ $errors->first('status') }}</small>
-                            @endif
-                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-save me-2"></i>Save</button>

@@ -54,6 +54,16 @@
                             @endif
                         </div>
 
+                        <!-- CAPTCHA Section -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 offset-md-4">
+                                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+                                @error('g-recaptcha-response')
+                                    <div class="text-danger small mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <!-- Submit -->
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">

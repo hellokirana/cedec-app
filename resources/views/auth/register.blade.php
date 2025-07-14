@@ -84,6 +84,18 @@
                                 class="form-control" required>
                         </div>
 
+                        <!-- CAPTCHA Section -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 offset-md-4">
+                                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+                                @error('g-recaptcha-response')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
                         <!-- Submit -->
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">

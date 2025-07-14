@@ -65,21 +65,20 @@
                                     </div>
                                     <div class="featured-single-wishlist">
                                         <h6>
-                                            @switch($workshop->status)
-                                                    @case(1)
-                                                        <span class="text-success fw-bold">Registration Open</span>
-                                                        @break
-                                                    @case(2)
-                                                        <span class="text-warning fw-bold">Ongoing</span>
-                                                        @break
-                                                    @case(3)
-                                                        <span class="text-secondary fw-bold">Closed</span>
-                                                        @break
-                                                    @default
-                                                        <span class="text-muted fw-bold">Unknown</span>
-                                            @endswitch
+                                            <span class="fw-bold 
+                                                @switch($registration->status)
+                                                    @case(1) text-secondary @break
+                                                    @case(2) text-success @break
+                                                    @case(3) text-warning @break
+                                                    @case(4) text-primary @break
+                                                    @case(5) text-danger @break
+                                                    @default text-muted
+                                                @endswitch">
+                                                {{ registration_status()[$registration->status] ?? 'Unknown' }}
+                                            </span>
                                         </h6>
                                     </div>
+
                                     <div class="featured-single-content">
                                         <a href="{{ url('workshop/' . $workshop->id) }}">{{ $workshop->title }}</a>
 

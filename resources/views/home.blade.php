@@ -186,6 +186,7 @@
                                             @case(1) bg-success @break
                                             @case(2) bg-primary @break
                                             @case(3) bg-danger @break
+                                            @case(4) bg-success @break
                                             @default bg-secondary
                                         @endswitch">
                                         {{ $label }}

@@ -45,6 +45,9 @@
                                         @case(3)
                                             <span class="text-secondary fw-bold">Closed</span>
                                             @break
+                                        @case(4)
+                                            <span class="text-warning fw-bold">Upcoming</span>
+                                        @break
                                         @default
                                             <span class="text-muted fw-bold">Unknown</span>
                                     @endswitch

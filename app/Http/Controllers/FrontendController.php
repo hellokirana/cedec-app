@@ -22,9 +22,8 @@ class FrontendController extends Controller
 {
     public function index()
     {
-        $slider_all = Slider::where('status', 1)->orderBy('queue')->get();
         $workshop_all = Workshop::where('status', 1)->latest()->limit(6)->get();
-        return view('frontend.welcome', compact('slider_all', 'workshop_all'));
+        return view('frontend.welcome', compact('workshop_all'));
     }
 
     public function workshop(Request $request)
@@ -268,5 +267,11 @@ class FrontendController extends Controller
 
         return back()->with('success', 'Profile picture updated successfully!');
     }
+
+    public function contact()
+    {
+        return view('frontend.contact');
+    }
+
 
 }

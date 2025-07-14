@@ -152,7 +152,7 @@
                         @else
                             <div class="dropdown d-flex align-items-center gap-2">
                     <img 
-                        src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/images/icons/default-avatar.png') }}" 
+                                    src="{{ Auth::user()->avatar ? asset('storage/avatars/' . Auth::user()->avatar) : asset('assets/images/icons/default-avatar.png') }}" 
                         alt="Avatar"
                         class="rounded-circle"
                         style="width: 32px; height: 32px; object-fit: cover;"

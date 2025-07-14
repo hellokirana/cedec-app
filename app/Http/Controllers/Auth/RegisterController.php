@@ -29,7 +29,7 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'program_id' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            // 'g-recaptcha-response' => 'required', // Validasi reCAPTCHA
+            'g-recaptcha-response' => 'required', // Validasi reCAPTCHA
 
         ]);
 
@@ -40,22 +40,22 @@ class RegisterController extends Controller
         // Validasi input
         $this->validator($request->all())->validate();
 
-        //     // Validasi reCAPTCHA
-        //     $response = $request->input('g-recaptcha-response');
-        //     $secret = env('RECAPTCHA_SECRET_KEY');
+        // Validasi reCAPTCHA
+        $response = $request->input('g-recaptcha-response');
+        $secret = env('RECAPTCHA_SECRET_KEY');
 
-        //     // Kirim permintaan ke Google untuk memverifikasi reCAPTCHA
-        //     $captchaResponse = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
-        //         'secret' => $secret,
-        //         'response' => $response,
-        //     ]);
+        // Kirim permintaan ke Google untuk memverifikasi reCAPTCHA
+        $captchaResponse = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
+            'secret' => $secret,
+            'response' => $response,
+        ]);
 
-        //     $captchaData = $captchaResponse->json();
+        $captchaData = $captchaResponse->json();
 
-        //     // Cek apakah reCAPTCHA valid
-        //     if (!$captchaData['success']) {
-        //         return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA verification failed.']);
-        //     }
+        // Cek apakah reCAPTCHA valid
+        if (!$captchaData['success']) {
+            return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA verification failed.']);
+        }
 
         // Jika validasi berhasil, buat pengguna baru
         $user = $this->create($request->all());

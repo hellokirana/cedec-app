@@ -18,6 +18,7 @@ class WorkshopController extends Controller
 {
     public function index(WorkshopDataTable $dataTable)
     {
+        $this->updateWorkshopStatuses();
         return $dataTable->render('data.workshop.index');
     }
 
@@ -141,4 +142,29 @@ class WorkshopController extends Controller
 
         return $dataTable->render('data.registration.index', compact('workshop'));
     }
+
+    private function updateWorkshopStatuses()
+    {
+        $now = now();
+
+        // UPCOMING
+        Workshop::whereDate('registration_start_date', '>', $now)
+            ->update(['status' => 4]);
+
+        // REGISTRATION OPEN
+        Workshop::whereDate('registration_start_date', '<=', $now)
+            ->whereDate('registration_end_date', '>=', $now)
+            ->update(['status' => 1]);
+
+        // ONGOING
+        Workshop::whereDate('workshop_start_date', '<=', $now)
+            ->whereDate('workshop_end_date', '>=', $now)
+            ->whereDate('registration_end_date', '<', $now)
+            ->update(['status' => 2]);
+
+        // COMPLETED
+        Workshop::whereDate('workshop_end_date', '<', $now)
+            ->update(['status' => 3]);
+    }
+
 }
