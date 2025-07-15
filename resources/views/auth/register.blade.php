@@ -85,7 +85,7 @@
                         </div>
 
                         <!-- CAPTCHA Section -->
-                        <div class="row mb-3">
+                        <div class="mb-3 text-center">
                             <div class="col-md-6 offset-md-4">
                                 <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
                                 @error('g-recaptcha-response')
