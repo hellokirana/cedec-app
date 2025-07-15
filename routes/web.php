@@ -15,11 +15,6 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Data\WorkshopRegistrationController;
 use Illuminate\Support\Facades\Artisan;
 
-Route::get('/make-storage-link', function () {
-    Artisan::call('storage:link');
-    return 'Symlink created successfully!';
-});
-
 // Route untuk autentikasi (login, register, forgot password)
 Auth::routes(['verify' => true]);
 
