@@ -38,6 +38,15 @@ class WorkshopRegistrationDataTable extends DataTable
                 }
                 return '<span class="text-muted">No proof</span>';
             })
+            ->editColumn('score', function ($model) {
+                return $model->score ?? '<span class="text-muted">—</span>';
+            })
+            ->editColumn('certificate', function ($model) {
+                return $model->certificate
+                    ? '<span class="badge bg-success">Uploaded</span>'
+                    : '<span class="badge bg-secondary">Not Uploaded</span>';
+            })
+
             ->editColumn('payment_status', function ($model) {
                 $statuses = payment_status();
                 $text = $statuses[$model->payment_status] ?? 'Unknown';
@@ -66,7 +75,7 @@ class WorkshopRegistrationDataTable extends DataTable
 
                 return '<span class="badge ' . $badgeClass . '">' . $text . '</span>';
             })
-            ->rawColumns(['transfer_proof', 'payment_status', 'status']);
+            ->rawColumns(['transfer_proof', 'payment_status', 'status', 'certificate']);
     }
 
     public function query(WorkshopRegistration $model): QueryBuilder
@@ -74,7 +83,7 @@ class WorkshopRegistrationDataTable extends DataTable
         return $model->newQuery()
             ->where('workshop_id', $this->workshopId)
             ->with(['workshop', 'user'])
-            ->whereIn('workshop_registrations.status', [2,3,4])
+            ->whereIn('workshop_registrations.status', [2, 3, 4])
             ->select('workshop_registrations.*')
             ->orderBy('workshop_registrations.created_at', 'desc');
     }
@@ -97,6 +106,8 @@ class WorkshopRegistrationDataTable extends DataTable
             Column::make('user.email')->title('Email')->name('user.email'),
             Column::make('time')->title('Waktu Daftar'),
             Column::make('transfer_proof')->title('Bukti Transfer')->orderable(false)->searchable(false),
+            Column::make('score')->title('Score'),
+            Column::make('certificate')->title('Sertifikat')->orderable(false)->searchable(false),
             Column::make('payment_status')->title('Status Pembayaran'),
             Column::make('status')->title('Status')->name('status')->data('status'),
         ];
