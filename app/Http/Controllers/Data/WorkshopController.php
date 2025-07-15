@@ -85,6 +85,14 @@ class WorkshopController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Convert d/m/Y to Y-m-d
+        $request->merge([
+            'workshop_start_date' => $request->workshop_start_date ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->workshop_start_date)->format('Y-m-d') : null,
+            'workshop_end_date' => $request->workshop_end_date ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->workshop_end_date)->format('Y-m-d') : null,
+            'registration_start_date' => $request->registration_start_date ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->registration_start_date)->format('Y-m-d') : null,
+            'registration_end_date' => $request->registration_end_date ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->registration_end_date)->format('Y-m-d') : null,
+        ]);
+
         $validated = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -97,7 +105,7 @@ class WorkshopController extends Controller
             'status' => 'required|in:0,1',
             'registration_start_date' => 'nullable|date',
             'registration_end_date' => 'nullable|date|after_or_equal:registration_start_date',
-        ]);
+        ])->validate();
 
         $data = Workshop::findOrFail($id);
         $data->fill($request->only([
@@ -126,6 +134,7 @@ class WorkshopController extends Controller
         Session::flash('success', 'Data updated successfully');
         return redirect()->route('workshop.index');
     }
+
 
     public function destroy($id)
     {

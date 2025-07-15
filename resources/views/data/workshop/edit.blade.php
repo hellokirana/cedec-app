@@ -48,7 +48,6 @@
                                     required
                                 />
                             </div>
-
                             <!-- Waktu & Tempat -->
                             <div class="col-md-6">
                                 <x-form.text label="Waktu" name="time"
