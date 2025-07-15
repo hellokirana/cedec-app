@@ -27,8 +27,8 @@ class BankController extends Controller
     public function store(Request $request)
     {
         $validated = Validator::make($request->all(), [
-            'no_urut' => 'required',
-            'nama' => 'required',
+            'queue' => 'required',
+            'name' => 'required',
             'status' => 'required',
         ]);
 
@@ -40,9 +40,9 @@ class BankController extends Controller
         }
 
         $data = new Bank();
-        $data->no_urut = $request->no_urut;
-        $data->nama = $request->nama;
-        $data->no_rekening = $request->no_rekening;
+        $data->queue = $request->queue;
+        $data->name = $request->name;
+        $data->bank_number = $request->bank_number;
         $data->bank = $request->bank;
         $data->status = $request->status;
         $data->save();
@@ -59,8 +59,8 @@ class BankController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'no_urut' => 'required|integer',
-            'nama' => 'required|string',
+            'queue' => 'required|integer',
+            'name' => 'required|string',
             'status' => 'required',
         ]);
 
@@ -68,9 +68,9 @@ class BankController extends Controller
         if (empty($data)) {
             return redirect()->back()->with('error', 'data tidak ditemukan');
         }
-        $data->no_urut = $request->no_urut;
-        $data->nama = $request->nama;
-        $data->no_rekening = $request->no_rekening;
+        $data->queue = $request->queue;
+        $data->name = $request->name;
+        $data->no_rekening = $request->bank_number;
         $data->bank = $request->bank;
         $data->status = $request->status;
 
