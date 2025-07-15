@@ -74,7 +74,7 @@ class WorkshopRegistrationDataTable extends DataTable
         return $model->newQuery()
             ->where('workshop_id', $this->workshopId)
             ->with(['workshop', 'user'])
-            ->where('workshop_registrations.status', [2,3,4])
+            ->whereIn('workshop_registrations.status', [2,3,4])
             ->select('workshop_registrations.*')
             ->orderBy('workshop_registrations.created_at', 'desc');
     }
