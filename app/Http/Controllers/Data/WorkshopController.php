@@ -31,6 +31,7 @@ class WorkshopController extends Controller
     {
         $validated = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'description' => 'nullable|string',
             'workshop_start_date' => 'required|date',
             'workshop_end_date' => 'required|date|after_or_equal:workshop_start_date',
@@ -38,7 +39,6 @@ class WorkshopController extends Controller
             'place' => 'nullable|string',
             'fee' => 'nullable|numeric',
             'quota' => 'nullable|integer',
-            'status' => 'required',
             'registration_start_date' => 'nullable|date',
             'registration_end_date' => 'nullable|date|after_or_equal:registration_start_date',
         ]);
@@ -58,7 +58,6 @@ class WorkshopController extends Controller
             'place',
             'fee',
             'quota',
-            'status',
             'registration_start_date',
             'registration_end_date'
         ]));
