@@ -50,11 +50,12 @@ class AdminController extends Controller
         $fileimage = $request->file('image');
         if (!empty($fileimage)) {
             $fileimageName = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
-            Storage::putFileAs(
-                'public/user',
+            Storage::disk('public_direct')->putFileAs(
+                'user',
                 $fileimage,
                 $fileimageName
             );
+
 
             $data->avatar = $fileimageName;
         }
@@ -95,8 +96,8 @@ class AdminController extends Controller
         $fileimage = $request->file('image');
         if (!empty($fileimage)) {
             $fileimageName = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
-            Storage::putFileAs(
-                'public/user',
+            Storage::disk('public_direct')->putFileAs(
+                'user',
                 $fileimage,
                 $fileimageName
             );

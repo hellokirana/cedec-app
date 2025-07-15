@@ -253,18 +253,17 @@ class FrontendController extends Controller
         $user = Auth::user();
 
         // Hapus avatar lama jika ada
-        if ($user->avatar && Storage::disk('public')->exists('avatars/' . $user->avatar)) {
-            Storage::disk('public')->delete('avatars/' . $user->avatar);
+        if ($user->avatar && Storage::disk('public_direct')->exists('avatars/' . $user->avatar)) {
+            Storage::disk('public_direct')->delete('avatars/' . $user->avatar);
         }
 
         // Simpan avatar baru
         $avatarName = uniqid() . '.' . $request->avatar->extension();
-        $request->avatar->storeAs('avatars', $avatarName, 'public');
+        $request->avatar->storeAs('avatars', $avatarName, 'public_direct');
 
         // Update ke database
         $user->avatar = $avatarName;
         $user->save();
-
         return back()->with('success', 'Profile picture updated successfully!');
     }
 

@@ -150,56 +150,56 @@ class HomeController extends Controller
         return view('frontend.profil', compact('data'));
     }
 
-    public function update_profil(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'no_rekening' => 'nullable|string|unique:users,no_rekening,' . Auth::user()->id,
-            'password' => 'nullable|min:6',
-            'image' => 'nullable|image|max:2048',
-            'no_telp' => 'nullable|string',
-            'email' => 'nullable|email',
-        ]);
+    // public function update_profil(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'name' => 'required|string',
+    //         'no_rekening' => 'nullable|string|unique:users,no_rekening,' . Auth::user()->id,
+    //         'password' => 'nullable|min:6',
+    //         'image' => 'nullable|image|max:2048',
+    //         'no_telp' => 'nullable|string',
+    //         'email' => 'nullable|email',
+    //     ]);
 
-        $data = User::where('id', Auth::user()->id)->first();
-        if (empty($data)) {
-            return redirect()->back()->with('error', 'Data not found');
-        }
+    //     $data = User::where('id', Auth::user()->id)->first();
+    //     if (empty($data)) {
+    //         return redirect()->back()->with('error', 'Data not found');
+    //     }
 
-        $data->name = $request->name;
-        $data->email = $request->email;
+    //     $data->name = $request->name;
+    //     $data->email = $request->email;
 
-        if (!empty($request->password)) {
-            $data->password = bcrypt($request->password);
-        }
+    //     if (!empty($request->password)) {
+    //         $data->password = bcrypt($request->password);
+    //     }
 
-        $data->no_telp = $request->no_telp;
-        $data->province_code = $request->province_code;
-        $data->city_code = $request->city_code;
-        $data->district_code = $request->district_code;
-        $data->village_code = $request->village_code;
-        $data->alamat = $request->alamat;
-        $data->rt = $request->rt;
-        $data->rw = $request->rw;
+    //     $data->no_telp = $request->no_telp;
+    //     $data->province_code = $request->province_code;
+    //     $data->city_code = $request->city_code;
+    //     $data->district_code = $request->district_code;
+    //     $data->village_code = $request->village_code;
+    //     $data->alamat = $request->alamat;
+    //     $data->rt = $request->rt;
+    //     $data->rw = $request->rw;
 
-        if ($request->no_rekening !== $data->no_rekening) {
-            $data->no_rekening = $request->no_rekening;
-        }
+    //     if ($request->no_rekening !== $data->no_rekening) {
+    //         $data->no_rekening = $request->no_rekening;
+    //     }
 
-        $fileimage = $request->file('image');
-        if (!empty($fileimage)) {
-            // Delete old image if exists
-            if ($data->avatar) {
-                Storage::delete('public/user/' . $data->avatar);
-            }
+    //     $fileimage = $request->file('image');
+    //     if (!empty($fileimage)) {
+    //         // Delete old image if exists
+    //         if ($data->avatar) {
+    //             Storage::delete('public/user/' . $data->avatar);
+    //         }
 
-            $fileimageName = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
-            Storage::putFileAs('public/user', $fileimage, $fileimageName);
-            $data->avatar = $fileimageName;
-        }
+    //         $fileimageName = date('dHis') . '.' . $fileimage->getClientOriginalExtension();
+    //         Storage::putFileAs('public/user', $fileimage, $fileimageName);
+    //         $data->avatar = $fileimageName;
+    //     }
 
-        $data->update();
-        Session::flash('success', 'Profile updated successfully');
-        return redirect('profil');
-    }
+    //     $data->update();
+    //     Session::flash('success', 'Profile updated successfully');
+    //     return redirect('profil');
+    // }
 }

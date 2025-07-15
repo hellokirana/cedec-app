@@ -79,14 +79,18 @@ class WorkshopRegistrationController extends Controller
         if ($request->hasFile('transfer_proof')) {
             // Delete old file if exists
             if ($registration->transfer_proof) {
-                Storage::delete('public/transfer_proof/' . $registration->transfer_proof);
+                Storage::disk('public_direct')->delete('transfer_proof/' . $registration->transfer_proof);
             }
 
             $file = $request->file('transfer_proof');
             $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
-            Storage::putFileAs('public/transfer_proof', $file, $filename);
+
+            // Simpan ke public_html/storage/transfer_proof
+            Storage::disk('public_direct')->putFileAs('transfer_proof', $file, $filename);
+
             $registration->transfer_proof = $filename;
         }
+
 
         $registration->save();
 
@@ -101,7 +105,7 @@ class WorkshopRegistrationController extends Controller
 
         // Delete transfer proof file if exists
         if ($registration->transfer_proof) {
-            Storage::delete('public/transfer_proof/' . $registration->transfer_proof);
+            Storage::disk('public_direct')->delete('transfer_proof/' . $registration->transfer_proof);
         }
 
         $registration->delete();
