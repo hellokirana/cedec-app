@@ -33,7 +33,7 @@
                                 <x-form.date
                                     label="Tanggal Mulai Workshop"
                                     name="workshop_start_date"
-                                    value="{{ old('workshop_start_date', optional($workshop->workshop_start_date)->format('d/m/Y')) }}"
+                                    value="{{ old('workshop_start_date', optional($workshop->workshop_start_date)->format('Y-m-d')) }}"
                                     :error="$errors->first('workshop_start_date')"
                                     required
                                 />
@@ -43,7 +43,7 @@
                                 <x-form.date
                                     label="Tanggal Selesai Workshop"
                                     name="workshop_end_date"
-                                    value="{{ old('workshop_end_date', optional($workshop->workshop_end_date)->format('d/m/Y')) }}"
+                                    value="{{ old('workshop_end_date', optional($workshop->workshop_end_date)->format('Y-m-d')) }}"
                                     :error="$errors->first('workshop_end_date')"
                                     required
                                 />
@@ -74,7 +74,7 @@
                                 <x-form.date
                                     label="Registrasi Mulai"
                                     name="registration_start_date"
-                                    value="{{ old('registration_start_date', optional($workshop->registration_start_date)->format('d/m/Y')) }}"
+                                    value="{{ old('registration_start_date', optional($workshop->registration_start_date)->format('Y-m-d')) }}"
                                     :error="$errors->first('registration_start_date')"
                                 />
                             </div>
@@ -83,7 +83,7 @@
                                 <x-form.date
                                     label="Registrasi Selesai"
                                     name="registration_end_date"
-                                    value="{{ old('registration_end_date', optional($workshop->registration_end_date)->format('d/m/Y')) }}"
+                                    value="{{ old('registration_end_date', optional($workshop->registration_end_date)->format('Y-m-d')) }}"
                                     :error="$errors->first('registration_end_date')"
                                 />
                             </div>
@@ -107,6 +107,7 @@
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-save me-2"></i>Update</button>
                     </div>
+                    
                 </div>
             </div>
         </div>
