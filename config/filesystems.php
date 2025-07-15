@@ -32,7 +32,7 @@ return [
 
         'public_direct' => [
             'driver' => 'local',
-            'root' => public_path('storage'),
+            'root' => base_path('storage'),
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
