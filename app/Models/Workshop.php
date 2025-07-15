@@ -22,6 +22,7 @@ class Workshop extends Model
         'registration_end_date',
         'workshop_start_date',
         'workshop_end_date',
+        'image'
     ];
     protected $appends = ['image_url'];
 

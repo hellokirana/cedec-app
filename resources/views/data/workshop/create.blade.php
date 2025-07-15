@@ -22,7 +22,7 @@
                             <!-- Deskripsi -->
                             <div class="col-12 mt-4">
                                     <label>Description</label>
-                                    <x-form.textarea for="description" name="description" :value="old('description')"
+                                    <x-form.textarea id="description" for="description" name="description" :value="old('description')"
                                         :error="$errors->first('description')"></x-form.textarea>
                                 </div>
 
