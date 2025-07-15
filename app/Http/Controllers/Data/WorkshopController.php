@@ -117,7 +117,7 @@ class WorkshopController extends Controller
         if ($request->hasFile('image')) {
             $fileimage = $request->file('image');
             $filename = date('YmdHis') . '.' . $fileimage->getClientOriginalExtension();
-            Storage::putFileAs('public/workshop', $fileimage, $filename);
+            $fileimage->move(public_path('storage/workshop'), $filename);
             $data->image = $filename;
         }
 
