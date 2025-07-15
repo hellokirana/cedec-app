@@ -133,8 +133,9 @@ class FrontendController extends Controller
             $data['status'] = 1;         // Not Registered
 
             if ($request->hasFile('transfer_proof')) {
-                $filename = $request->file('transfer_proof')->store('transfer_proofs', 'public');
-                $data['transfer_proof'] = $filename;
+                $filename = date('YmdHis') . '_' . $request->file('transfer_proof')->getClientOriginalName();
+                Storage::disk('public_direct')->putFileAs('transfer_proofs', $request->file('transfer_proof'), $filename);
+                $data['transfer_proof'] = 'transfer_proofs/' . $filename;
             }
         }
 
