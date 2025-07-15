@@ -39,7 +39,7 @@ class WorkshopRegistrationDataTable extends DataTable
                 return '<span class="text-muted">No proof</span>';
             })
             ->editColumn('score', function ($model) {
-                return $model->score ?? '<span class="text-muted">—</span>';
+                return $model->score ?? '-';
             })
             ->editColumn('certificate', function ($model) {
                 return $model->certificate
