@@ -86,15 +86,15 @@
 
                         <!-- CAPTCHA Section -->
                         <div class="mb-3 text-center">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
-                                @error('g-recaptcha-response')
-                                    <span class="invalid-feedback d-block" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                            <div class="g-recaptcha d-inline-block" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+
+                            @error('g-recaptcha-response')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
+
 
                         <!-- Submit -->
                         <div class="d-grid">
