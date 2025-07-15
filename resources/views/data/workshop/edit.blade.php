@@ -30,12 +30,22 @@
 
                             <!-- Tanggal Mulai & Selesai -->
                             <div class="col-md-6">
-                                <x-form.date label="Tanggal Mulai Workshop" name="workshop_start_date"
-                                    value="{{ old('workshop_start_date', $workshop->workshop_start_date) }}" :error="$errors->first('workshop_start_date')" required />
+                                <x-form.date 
+                                    label="Tanggal Mulai Workshop" 
+                                    name="workshop_start_date"
+                                    value="{{ old('workshop_start_date', optional($workshop->workshop_start_date)->format('Y-m-d')) }}" 
+                                    :error="$errors->first('workshop_start_date')" 
+                                    required 
+                                />
                             </div>
                             <div class="col-md-6">
-                                <x-form.date label="Tanggal Selesai Workshop" name="workshop_end_date"
-                                    value="{{ old('workshop_end_date', $workshop->workshop_end_date) }}" :error="$errors->first('workshop_end_date')" required />
+                                <x-form.date 
+                                    label="Tanggal Selesai Workshop" 
+                                    name="workshop_end_date"
+                                    value="{{ old('workshop_end_date', optional($workshop->workshop_end_date)->format('Y-m-d')) }}" 
+                                    :error="$errors->first('workshop_end_date')" 
+                                    required 
+                                />
                             </div>
 
                             <!-- Waktu & Tempat -->
@@ -60,12 +70,20 @@
 
                             <!-- Tanggal Registrasi -->
                             <div class="col-md-6">
-                                <x-form.date label="Registrasi Mulai" name="registration_start_date"
-                                    value="{{ old('registration_start_date', $workshop->registration_start_date) }}" :error="$errors->first('registration_start_date')" />
+                                <x-form.date 
+                                    label="Registrasi Mulai" 
+                                    name="registration_start_date"
+                                    value="{{ old('registration_start_date', optional($workshop->registration_start_date)->format('Y-m-d')) }}" 
+                                    :error="$errors->first('registration_start_date')" 
+                                />
                             </div>
                             <div class="col-md-6">
-                                <x-form.date label="Registrasi Selesai" name="registration_end_date"
-                                    value="{{ old('registration_end_date', $workshop->registration_end_date) }}" :error="$errors->first('registration_end_date')" />
+                                <x-form.date 
+                                    label="Registrasi Selesai" 
+                                    name="registration_end_date"
+                                    value="{{ old('registration_end_date', optional($workshop->registration_end_date)->format('Y-m-d')) }}" 
+                                    :error="$errors->first('registration_end_date')" 
+                                />
                             </div>
                         </div>
                     </div>
