@@ -31,7 +31,7 @@ class BankDataTable extends DataTable
 
                 return $button;
             })
-            ->rawColumns([ 'action']);
+            ->rawColumns(['action']);
     }
 
     /**
@@ -71,10 +71,10 @@ class BankDataTable extends DataTable
     {
         return [
 
-            Column::make('no_urut')->width(50)->orderable(false)->searchable(false),
-            Column::make('nama'),
+            Column::make('queue')->width(50)->orderable(false)->searchable(false),
+            Column::make('name'),
             Column::make('bank'),
-            Column::make('no_rekening'),
+            Column::make('bank_number'),
             Column::make('status')->width(50)->orderable(false)->searchable(false),
             Column::computed('action')
                 ->exportable(false)
