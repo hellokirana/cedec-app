@@ -24,6 +24,9 @@ class WorkshopRegistrationDataTable extends DataTable
             ->editColumn('user.name', function ($model) {
                 return $model->user ? $model->user->name : '-';
             })
+            ->editColumn('user.npm', function ($model) {
+                return $model->user ? $model->user->npm : '-';
+            })
             ->editColumn('user.email', function ($model) {
                 return $model->user ? $model->user->email : '-';
             })
@@ -63,16 +66,7 @@ class WorkshopRegistrationDataTable extends DataTable
 
                 return '<span class="badge ' . $badgeClass . '">' . $text . '</span>';
             })
-            ->addColumn('action', function ($row) {
-                $editUrl = route('workshop.registration.edit', [$this->workshopId, $row->id]);
-                $deleteUrl = route('workshop.registration.destroy', [$this->workshopId, $row->id]);
-
-                return '
-                    <a href="' . $editUrl . '" class="btn btn-warning btn-sm mx-1" title="Edit"><i class="ri-file-edit-line"></i></a>
-                    <a href="#" data-url_href="' . $deleteUrl . '" class="btn btn-danger btn-sm mx-1 delete-post" title="Delete" data-csrf="' . csrf_token() . '"><i class="ri-delete-bin-2-line"></i></a>
-                ';
-            })
-            ->rawColumns(['transfer_proof', 'payment_status', 'status', 'action']);
+            ->rawColumns(['transfer_proof', 'payment_status', 'status']);
     }
 
     public function query(WorkshopRegistration $model): QueryBuilder
@@ -99,16 +93,12 @@ class WorkshopRegistrationDataTable extends DataTable
     {
         return [
             Column::make('user.name')->title('Nama Peserta')->name('user.name'),
+            Column::make('user.npm')->title('NPM')->name('user.npm'),
             Column::make('user.email')->title('Email')->name('user.email'),
             Column::make('time')->title('Waktu Daftar'),
             Column::make('transfer_proof')->title('Bukti Transfer')->orderable(false)->searchable(false),
             Column::make('payment_status')->title('Status Pembayaran'),
             Column::make('status')->title('Status')->name('status')->data('status'),
-            Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->width(120)
-                ->addClass('text-center'),
         ];
     }
 
