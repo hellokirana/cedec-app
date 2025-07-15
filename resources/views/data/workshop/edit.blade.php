@@ -28,23 +28,24 @@
                                     :error="$errors->first('description')"></x-form.textarea>
                             </div>
 
-                            <!-- Tanggal Mulai & Selesai -->
+                            {{-- Tanggal Mulai & Selesai --}}
                             <div class="col-md-6">
-                                <x-form.date 
-                                    label="Tanggal Mulai Workshop" 
+                                <x-form.date
+                                    label="Tanggal Mulai Workshop"
                                     name="workshop_start_date"
-                                    value="{{ old('workshop_start_date', optional($workshop->workshop_start_date)->format('Y-m-d')) }}" 
-                                    :error="$errors->first('workshop_start_date')" 
-                                    required 
+                                    value="{{ old('workshop_start_date', optional($workshop->workshop_start_date)->format('d/m/Y')) }}"
+                                    :error="$errors->first('workshop_start_date')"
+                                    required
                                 />
                             </div>
+
                             <div class="col-md-6">
-                                <x-form.date 
-                                    label="Tanggal Selesai Workshop" 
+                                <x-form.date
+                                    label="Tanggal Selesai Workshop"
                                     name="workshop_end_date"
-                                    value="{{ old('workshop_end_date', optional($workshop->workshop_end_date)->format('Y-m-d')) }}" 
-                                    :error="$errors->first('workshop_end_date')" 
-                                    required 
+                                    value="{{ old('workshop_end_date', optional($workshop->workshop_end_date)->format('d/m/Y')) }}"
+                                    :error="$errors->first('workshop_end_date')"
+                                    required
                                 />
                             </div>
 
@@ -68,21 +69,22 @@
                                     value="{{ old('quota', $workshop->quota) }}" :error="$errors->first('quota')" />
                             </div>
 
-                            <!-- Tanggal Registrasi -->
+                            {{-- Registrasi --}}
                             <div class="col-md-6">
-                                <x-form.date 
-                                    label="Registrasi Mulai" 
+                                <x-form.date
+                                    label="Registrasi Mulai"
                                     name="registration_start_date"
-                                    value="{{ old('registration_start_date', optional($workshop->registration_start_date)->format('Y-m-d')) }}" 
-                                    :error="$errors->first('registration_start_date')" 
+                                    value="{{ old('registration_start_date', optional($workshop->registration_start_date)->format('d/m/Y')) }}"
+                                    :error="$errors->first('registration_start_date')"
                                 />
                             </div>
+
                             <div class="col-md-6">
-                                <x-form.date 
-                                    label="Registrasi Selesai" 
+                                <x-form.date
+                                    label="Registrasi Selesai"
                                     name="registration_end_date"
-                                    value="{{ old('registration_end_date', optional($workshop->registration_end_date)->format('Y-m-d')) }}" 
-                                    :error="$errors->first('registration_end_date')" 
+                                    value="{{ old('registration_end_date', optional($workshop->registration_end_date)->format('d/m/Y')) }}"
+                                    :error="$errors->first('registration_end_date')"
                                 />
                             </div>
                         </div>
