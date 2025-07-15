@@ -6,7 +6,7 @@ npm i laravel-datatables-vite --save-dev
 composer require spatie/laravel-permission
 # composer require artesaos/seotools
 # composer require bangnokia/laravel-serve-livereload --dev
-composer require barryvdh/laravel-debugbar --dev
+# composer require barryvdh/laravel-debugbar --dev
 composer require beyondcode/laravel-query-detector --dev
 composer require unisharp/laravel-filemanager
 
