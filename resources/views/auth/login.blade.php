@@ -55,14 +55,13 @@
                         </div>
 
                         <!-- CAPTCHA Section -->
-                        <div class="mb-3">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
-                                @error('g-recaptcha-response')
-                                    <div class="text-danger small mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <div class="mb-3 text-center">
+                            <div class="g-recaptcha d-inline-block" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+                            @error('g-recaptcha-response')
+                                <div class="text-danger small mt-2">{{ $message }}</div>
+                            @enderror
                         </div>
+
 
                         <!-- Submit -->
                         <div class="d-grid">
