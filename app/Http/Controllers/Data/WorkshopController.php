@@ -97,7 +97,7 @@ class WorkshopController extends Controller
             'status' => 'required|in:0,1',
             'registration_start_date' => 'nullable|date',
             'registration_end_date' => 'nullable|date|after_or_equal:registration_start_date',
-        ])->validate();
+        ]);
 
         $data = Workshop::findOrFail($id);
         $data->fill($request->only([
