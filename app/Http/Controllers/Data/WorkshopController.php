@@ -84,13 +84,6 @@ class WorkshopController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Convert d/m/Y to Y-m-d
-        $request->merge([
-            'workshop_start_date' => $request->workshop_start_date ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->workshop_start_date)->format('Y-m-d') : null,
-            'workshop_end_date' => $request->workshop_end_date ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->workshop_end_date)->format('Y-m-d') : null,
-            'registration_start_date' => $request->registration_start_date ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->registration_start_date)->format('Y-m-d') : null,
-            'registration_end_date' => $request->registration_end_date ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->registration_end_date)->format('Y-m-d') : null,
-        ]);
 
         $validated = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
