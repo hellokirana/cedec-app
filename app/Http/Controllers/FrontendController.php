@@ -32,18 +32,22 @@ class FrontendController extends Controller
             'search' => 'nullable|string',
             'status' => 'nullable|in:1,2,3',
             'fee' => 'nullable|in:free,paid',
-
         ]);
 
         $search = $request->search;
         $status = $request->status;
         $fee = $request->fee;
 
-        $query = Workshop::with([
-            'registrations' => function ($q) {
-                $q->where('user_id', auth()->id());
-            }
-        ]);
+        $query = Workshop::query();
+
+        // Jika user login, tambahkan relasi registrasi
+        if (auth()->check()) {
+            $query->with([
+                'registrations' => function ($q) {
+                    $q->where('user_id', auth()->id());
+                }
+            ]);
+        }
 
         // Filter berdasarkan pencarian
         if (!empty($search)) {
@@ -77,19 +81,29 @@ class FrontendController extends Controller
 
     public function workshop_detail($id)
     {
-
         $data = Workshop::where('id', $id)->first();
         $banks = \App\Models\Bank::all();
 
         if (empty($data)) {
-            return redirect()->back()->with('error', 'data not found');
+            return redirect()->back()->with('error', 'Workshop not found');
         }
+
         $data_related = Workshop::where('status', 1)->where('id', '!=', $id)->inRandomOrder()->limit(4)->get();
         return view('frontend.workshop_detail', compact('data', 'data_related', 'banks'));
     }
 
     public function send_workshop_registration(Request $request)
     {
+        // Pastikan user sudah login
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please login first to register for workshops.');
+        }
+
+        // Pastikan email sudah terverifikasi
+        if (!Auth::user()->email_verified_at) {
+            return redirect()->route('verification.notice')->with('error', 'Please verify your email first.');
+        }
+
         $request->validate([
             'workshop_id' => 'required|exists:workshops,id',
             'transfer_proof' => ($request->has('workshop_id') && Workshop::find($request->workshop_id)?->fee > 0)
@@ -189,8 +203,6 @@ class FrontendController extends Controller
         return view('frontend.my_workshop', compact('registrations', 'search', 'status', 'fee'));
     }
 
-    // app/Http/Controllers/FrontendController.php
-
     public function result()
     {
         $user = auth()->user();
@@ -212,8 +224,6 @@ class FrontendController extends Controller
 
         return view('frontend.result', compact('registrations'));
     }
-
-
 
     public function downloadCertificate($registration_id)
     {
@@ -237,7 +247,6 @@ class FrontendController extends Controller
 
         return response()->download($filePath);
     }
-
 
     public function showStudentProfile()
     {
@@ -272,6 +281,4 @@ class FrontendController extends Controller
     {
         return view('frontend.contact');
     }
-
-
 }

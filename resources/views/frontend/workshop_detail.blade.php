@@ -37,7 +37,6 @@
             </div>
         @endif
 
-
         <div class="row g-4">
             <!-- Poster (Kiri) -->
             <div class="col-lg-4">
@@ -84,80 +83,157 @@
                             </li>
                             <li><i class="fa-solid fa-location-dot me-2"></i>{{ $data->place }}</li>
                         </ul>
+
+                        <!-- Free Workshop Registration -->
                         @if($data->fee == 0)
                             @if($data->status == 1)
-                                <form method="POST" action="{{ url('send_workshop_registration') }}" enctype="multipart/form-data">
-                                    @csrf
-                                    <input type="hidden" name="workshop_id" value="{{ $data->id }}">
+                                @guest
+                                    <!-- Jika belum login, redirect ke login -->
                                     <div class="text-end">
-                                        <button type="submit" class="btn btn-primary px-4">Register</button>
+                                        <a href="{{ route('login') }}" class="btn btn-primary px-4">
+                                            Login to Register
+                                        </a>
                                     </div>
-                                </form>
+                                @else
+                                    <!-- Jika sudah login, tampilkan form register -->
+                                    @if(Auth::user()->email_verified_at)
+                                        @php
+                                            $existingRegistration = \App\Models\WorkshopRegistration::where('user_id', Auth::id())
+                                                ->where('workshop_id', $data->id)
+                                                ->first();
+                                        @endphp
+                                        
+                                        @if($existingRegistration)
+                                            <div class="text-end">
+                                                <span class="badge bg-success px-3 py-2">Already Registered</span>
+                                            </div>
+                                        @else
+                                            <form method="POST" action="{{ url('send_workshop_registration') }}" enctype="multipart/form-data">
+                                                @csrf
+                                                <input type="hidden" name="workshop_id" value="{{ $data->id }}">
+                                                <div class="text-end">
+                                                    <button type="submit" class="btn btn-primary px-4">Register</button>
+                                                </div>
+                                            </form>
+                                        @endif
+                                    @else
+                                        <div class="text-end">
+                                            <a href="{{ route('verification.notice') }}" class="btn btn-warning px-4">
+                                                Verify Email to Register
+                                            </a>
+                                        </div>
+                                    @endif
+                                @endguest
                             @endif
                         @endif
-
-
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Form Registrasi -->
+        <!-- Paid Workshop Registration Form -->
         @if($data->fee > 0 && $data->status == 1)
-<div class="bg-white mt-5 p-4 rounded shadow-sm">
-    
-
-    <form method="POST" action="{{ url('send_workshop_registration') }}" enctype="multipart/form-data">
-       
-
-        @csrf
-        
-        <input type="hidden" name="workshop_id" value="{{ $data->id }}">
-
-        <div class="row mb-4">
-            
-            <div class="d-flex justify-content-between align-items-center mb-2">
-        <h5 class="fw-semibold mb-0">Registration Form</h5>
-        <div class="text-end">
-            <span class="text-muted small">Please pay to the following account:</span><br>
-            @foreach($banks as $bank)
-                <strong class="text-dark d-block">{{ $bank->bank_number }}</strong>
-                <span class="text-muted small">{{ $bank->bank }} - {{ $bank->name }}</span>
-            @endforeach
-        </div>
-    </div>
-            <div class="col-12">
-                <div class="border rounded p-4 text-muted border-dashed d-flex align-items-center gap-4 flex-wrap" style="border-style: dashed;">
-                    <i class="fa-solid fa-upload fa-2x"></i>
-                    <div class="flex-grow-1">
-                        <p class="mb-1">Upload your receipt of payment here</p>
-                        <label class="btn btn-outline-secondary btn-sm mt-1">
-                            Choose File
-                            <input type="file" name="transfer_proof" id="transfer_proof" hidden required>
-                        </label>
-                        <!-- Tempat preview muncul -->
-                        <div id="file-preview" class="mt-2 text-start small text-dark"></div>
-@error('transfer_proof')
-    <div class="text-danger mt-2 small">
-        <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ $message }}
-    </div>
-@enderror
-
-                    </div>
+            @guest
+                <!-- Jika belum login untuk workshop berbayar -->
+                <div class="bg-white mt-5 p-4 rounded shadow-sm text-center">
+                    <h5 class="fw-semibold mb-3">Registration Required</h5>
+                    <p class="text-muted mb-3">Please login to register for this workshop</p>
+                    <a href="{{ route('login') }}" class="btn btn-primary px-4">Login to Register</a>
                 </div>
-            </div>
-            
-        </div>
+            @else
+                @if(Auth::user()->email_verified_at)
+                    @php
+                        $existingRegistration = \App\Models\WorkshopRegistration::where('user_id', Auth::id())
+                            ->where('workshop_id', $data->id)
+                            ->first();
+                    @endphp
+                    
+                    @if($existingRegistration)
+                        <div class="bg-white mt-5 p-4 rounded shadow-sm text-center">
+                            <h5 class="fw-semibold mb-3">Registration Status</h5>
+                            <span class="badge bg-success px-3 py-2">Already Registered</span>
+                            @if($existingRegistration->payment_status == 1)
+                                <p class="text-muted mt-2 mb-0">Payment is under review</p>
+                            @endif
+                        </div>
+                    @else
+                        <div class="bg-white mt-5 p-4 rounded shadow-sm">
+                            <form method="POST" action="{{ url('send_workshop_registration') }}" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="workshop_id" value="{{ $data->id }}">
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary px-4">Register</button>
-        </div>
+                                <div class="row mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="fw-semibold mb-0">Registration Form</h5>
+                                        <div class="text-end">
+                                            <span class="text-muted small">Please pay to the following account:</span><br>
+                                            @foreach($banks as $bank)
+                                                <strong class="text-dark d-block">{{ $bank->bank_number }}</strong>
+                                                <span class="text-muted small">{{ $bank->bank }} - {{ $bank->name }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="border rounded p-4 text-muted border-dashed d-flex align-items-center gap-4 flex-wrap" style="border-style: dashed;">
+                                            <i class="fa-solid fa-upload fa-2x"></i>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-1">Upload your receipt of payment here</p>
+                                                <label class="btn btn-outline-secondary btn-sm mt-1">
+                                                    Choose File
+                                                    <input type="file" name="transfer_proof" id="transfer_proof" hidden required>
+                                                </label>
+                                                <!-- Tempat preview muncul -->
+                                                <div id="file-preview" class="mt-2 text-start small text-dark"></div>
+                                                @error('transfer_proof')
+                                                    <div class="text-danger mt-2 small">
+                                                        <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary px-4">Register</button>
+                                </div>
+                            </form>
+                        </div>
+                    @endif
+                @else
+                    <!-- Jika login tapi belum verifikasi email -->
+                    <div class="bg-white mt-5 p-4 rounded shadow-sm text-center">
+                        <h5 class="fw-semibold mb-3">Email Verification Required</h5>
+                        <p class="text-muted mb-3">Please verify your email address to register for this workshop</p>
+                        <a href="{{ route('verification.notice') }}" class="btn btn-warning px-4">Verify Email</a>
+                    </div>
+                @endif
+            @endguest
         @endif
-    </form>
-</div>
-
-        </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('transfer_proof');
+    const filePreview = document.getElementById('file-preview');
+    
+    if (fileInput && filePreview) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                filePreview.innerHTML = `
+                    <i class="fa-solid fa-file-image me-1"></i>
+                    <strong>Selected:</strong> ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                `;
+            } else {
+                filePreview.innerHTML = '';
+            }
+        });
+    }
+});
+</script>
+@endpush
+
 @endsection
