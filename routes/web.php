@@ -18,20 +18,22 @@ use Illuminate\Support\Facades\Artisan;
 // Route untuk autentikasi (login, register, forgot password)
 Auth::routes(['verify' => true]);
 
+// Halaman publik yang bisa diakses tanpa login
+Route::get('/', [FrontendController::class, 'index']);
+Route::get('/workshop', [FrontendController::class, 'workshop']);
+Route::get('/workshop/{id}', [FrontendController::class, 'workshop_detail']);
+Route::get('/contact', [FrontendController::class, 'contact']);
+
 // Halaman yang hanya bisa diakses oleh user login & verified
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/', [FrontendController::class, 'index']);
-    Route::get('/workshop', [FrontendController::class, 'workshop']);
-    Route::get('/workshop/{id}', [FrontendController::class, 'workshop_detail']);
+    // Halaman yang memerlukan login dan verifikasi
     Route::get('/my-workshop', [FrontendController::class, 'my_workshop']);
     Route::post('/send_workshop_registration', [FrontendController::class, 'send_workshop_registration'])->name('send_workshop_registration');
-    Route::get('/result', action: [FrontendController::class, 'result']);
-    Route::get('/contact', action: [FrontendController::class, 'contact']);
+    Route::get('/result', [FrontendController::class, 'result']);
     Route::get('/profile', [FrontendController::class, 'showStudentProfile'])->name('student.profile');
     Route::post('/profile/update-avatar', [FrontendController::class, 'updateAvatar'])->name('student.profile.avatar.update');
     Route::get('/my-certificate/{registration_id}/download', [FrontendController::class, 'downloadCertificate'])
         ->name('download.certificate');
-
 
     // Admin-Only Routes (pakai role superadmin)
     Route::middleware('role:superadmin')->group(function () {
@@ -50,9 +52,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/data/admin', AdminController::class);
         Route::resource('/data/workshop', WorkshopController::class);
         Route::resource('/data/program', ProgramController::class);
-
-
-
 
         Route::group(['prefix' => 'data', 'middleware' => 'auth'], function () {
             // Workshop routes yang sudah ada
@@ -84,9 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('data/workshop-registration/{id}/confirm', [WorkshopRegistrationController::class, 'confirm']);
         Route::get('data/workshop-registration/{id}/reject', [WorkshopRegistrationController::class, 'reject']);
-
     });
-
 });
 
 // Email Verification View

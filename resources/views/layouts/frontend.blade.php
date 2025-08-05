@@ -17,8 +17,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-
 </head>
 
 <body>
@@ -52,26 +50,37 @@
                                 <nav class="main-menu navbar-expand-md navbar-light">
                                     <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                         <ul class="navigation">
-                                            @auth
-                                            @if(Auth::user()->email_verified_at)
+                                            <!-- Menu Home - selalu ditampilkan -->
                                             <li>
                                                 <a href="{{ url('/') }}">Home</a>
                                             </li>
+                                            
+                                            <!-- Menu Workshop - selalu ditampilkan -->
                                             <li class="dropdown">
                                                 <a>Workshops <i class="fa-solid fa-chevron-down ms-1"></i></a>
                                                 <ul>
                                                     <li><a href="{{ url('/workshop') }}">All Workshops</a></li>
-                                                    <li><a href="{{ url('/my-workshop') }}">My Workshops</a></li>
+                                                    @auth
+                                                        @if(Auth::user()->email_verified_at)
+                                                            <li><a href="{{ url('/my-workshop') }}">My Workshops</a></li>
+                                                        @endif
+                                                    @endauth
                                                 </ul>
                                             </li>
-                                            <li>
-                                                <a href="{{ url('/result') }}">Result & Certificate</a>
-                                            </li>
+                                            
+                                            <!-- Menu Result - hanya untuk user login & verified -->
+                                            @auth
+                                                @if(Auth::user()->email_verified_at)
+                                                    <li>
+                                                        <a href="{{ url('/result') }}">Result & Certificate</a>
+                                                    </li>
+                                                @endif
+                                            @endauth
+                                            
+                                            <!-- Menu Contact - selalu ditampilkan -->
                                             <li>
                                                 <a href="{{ url('/contact') }}">Contact</a>
                                             </li>
-                                            @endif
-                                            @endauth
                                         </ul>
                                     </div>
                                 </nav>
@@ -100,7 +109,7 @@
                                     {{ Auth::user()->name }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ route('student.profile') }}">Profile</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('student.profile') }}">Profile</a></li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -120,8 +129,6 @@
     </div>
 </div>
 <!-- Header Lower -->
-
-
 
             <!-- sticky header -->
             <div class="sticky-header">
@@ -209,7 +216,7 @@
                             @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
                                 <a href="{{ url('home') }}" class="d-block text-dark">Member Area</a>
                             @else
-                                <a href="{{ url('/profil') }}" class="d-block text-dark mb-2">Profil ({{ Auth::user()->name }})</a>
+                                <a href="{{ route('student.profile') }}" class="d-block text-dark mb-2">Profile ({{ Auth::user()->name }})</a>
                                 <a href="{{ route('logout') }}"
                                 class="d-block text-dark"
                                 onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();">
@@ -226,12 +233,10 @@
         </header>
         <!-- header -->
 
-
         @yield('content')
 
         <!-- footer -->
-        @auth
-            <footer id="footer" class="main-footer footer-one">
+        <footer id="footer" class="main-footer footer-one">
             <div class="footer-copyright">
                 <div class="container">
                     <div class="footer-copyright-content text-center">
@@ -240,13 +245,9 @@
                 </div>
             </div>
         </footer>
-        @endauth
-        
         <!-- footer -->
 
-
     </div>
-
 
     <!--Scroll to top-->
     <div class="scroll-to-top">
@@ -260,8 +261,6 @@
         </div>
     </div>
     <!-- Scroll to top end -->
-
-
 
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
